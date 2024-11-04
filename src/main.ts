@@ -5,7 +5,6 @@ const app: Express = express();
 const port = process.env.PORT || 3000;
 
 app.get('/', (_, res) => {
-  // serve the form as html file
   res.sendFile(join(__dirname, 'tmp.html'));
 });
 
