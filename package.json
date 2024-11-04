@@ -1,0 +1,10 @@
+{
+  "name": "enhanced-preprints-import-controller",
+  "packageManager": "yarn@4.3.1",
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.4",
+    "@types/node": "^22.8.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}
