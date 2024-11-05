@@ -11,6 +11,10 @@ app.get('/', (_, res) => {
   res.sendFile(join(__dirname, 'tmp.html'));
 });
 
+app.get('/input', (_, res) => {
+  res.sendFile(join(__dirname, 'index.html'));
+});
+
 app.post('/input', (req, res) => {
   const form: parser.ManuscriptData = req.body;
   console.log(`received form reponse: ${form}`)
