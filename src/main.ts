@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import { join } from 'path';
 import BodyParser from 'body-parser';
 import { Client } from '@temporalio/client';
+import { ManuscriptData } from '@elifesciences/docmap-ts';
 
 const app: Express = express();
 const port = process.env.PORT || 5000;
@@ -23,14 +24,18 @@ app.post('/input', async (req, res) => {
   // validate
   // send to temporal
   const client = new Client();
+  const manuscriptData: ManuscriptData = {
+    id: form.id,
+    versions: [],
+  };
   const workflow = await client.workflow.start('importManuscriptData', {
     taskQueue: 'epp',
     workflowId: 'your-workflow-id',
     args: [
-      {}
-    ]
+      manuscriptData,
+    ],
   });
-  res.send(`import started ${workflow.workflowId} ${workflow.firstExecutionRunId}`);
+  res.send(`import started http://localhost:8233/namespaces/default/workflows/${workflow.workflowId}/${workflow.firstExecutionRunId}`);
 });
 
 app.get('/previous-imports', (_, res) => {
