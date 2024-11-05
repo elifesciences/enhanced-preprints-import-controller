@@ -1,6 +1,5 @@
 import express, { Express } from 'express';
 import { join } from 'path';
-import { parser } from '@elifesciences/docmap-ts';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
@@ -16,8 +15,8 @@ app.get('/input', (_, res) => {
 });
 
 app.post('/input', (req, res) => {
-  const form: parser.ManuscriptData = req.body;
-  console.log(`received form reponse: ${form}`)
+  const form = req.body;
+  console.log(`received form response: ${JSON.stringify(form)}`);
   // validate
   // send to temporal
   res.send('import successful');
