@@ -30,20 +30,19 @@ app.post('/input', async (req, res) => {
   };
   
   // send to temporal
-  try {
-    const workflow = await client.workflow.start('importManuscriptData', {
-      taskQueue: 'epp',
-      workflowId: 'your-workflow-id',
-      args: [
-        manuscriptData,
-      ],
+  await client.workflow.start('importManuscriptData', {
+    taskQueue: 'epp',
+    workflowId: 'your-workflow-id',
+    args: [
+      manuscriptData,
+    ],
+  })
+    .then((result) => `http://localhost:8233/namespaces/default/workflows/${result.workflowId}/${result.firstExecutionRunId}`)
+    .then((url) => res.status(200).send(`Import started <a href="${url}">${url}</a>`))
+    .catch((error) => {
+      console.error('An error occurred while starting the workflow', error);
+      return res.status(500).send(`An error occurred while processing your request: ${error instanceof Error ? error.message : 'Unknown error'}.`);
     });
-    res.send(`import started http://localhost:8233/namespaces/default/workflows/${workflow.workflowId}/${workflow.firstExecutionRunId}`);
-} catch (error) {
-    console.error("An error occurred while starting the workflow: ", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    res.status(500).send( `An error occurred while processing your request: ${errorMessage}`);
-  }
 });
 
 app.get('/previous-imports', (_, res) => {
