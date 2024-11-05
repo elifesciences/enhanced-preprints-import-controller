@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Import Manuscript</title>
+</head>
+<body>
+  
+  <form action="/input" method="post">
+    <h2>ID</h2>
+    <label for="id">ID (required):</label>
+    <input type="text" id="id" name="id" required>
+    <br><br>
+
+    <h2>Manuscript</h2>
+    <label for="manuscript-doi">DOI:</label>
+    <input type="text" id="manuscript-doi" name="manuscript[doi]">
+    <br><br>
+
+    <label for="manuscript-volume">Volume:</label>
+    <input type="text" id="manuscript-volume" name="manuscript[volume]">
+    <br><br>
+
+    <label for="manuscript-eLocationId">eLocation ID:</label>
+    <input type="text" id="manuscript-eLocationId" name="manuscript[eLocationId]">
+    <br><br>
+
+    <label for="manuscript-publishedDate">Published Date:</label>
+    <input type="date" id="manuscript-publishedDate" name="manuscript[publishedDate]">
+    <br><br>
+
+    <label for="manuscript-subjects">Subjects:</label>
+    <input type="text" id="manuscript-subjects" name="manuscript[subjects]">
+    <br><br>
+
+    <label for="manuscript-relatedContent">Related Content:</label>
+    <input type="text" id="manuscript-relatedContent" name="manuscript[relatedContent]">
+    <br><br>
+
+    <h2>Versions</h2>
+    <label for="version-id">Version ID (required):</label>
+    <input type="text" id="version-id" name="versions[id]" required>
+    <br><br>
+
+    <label for="version-doi">DOI (required):</label>
+    <input type="text" id="version-doi" name="versions[doi]" required>
+    <br><br>
+
+    <label for="version-preprint">Preprint (required):</label>
+    <input type="text" id="version-preprint" name="versions[preprint]" required>
+    <br><br>
+
+    <label for="version-versionIdentifier">Version Identifier:</label>
+    <input type="text" id="version-versionIdentifier" name="versions[versionIdentifier]">
+    <br><br>
+
+    <label for="version-sentForReviewDate">Sent for Review Date:</label>
+    <input type="date" id="version-sentForReviewDate" name="versions[sentForReviewDate]">
+    <br><br>
+
+    <label for="version-peerReview">Peer Review:</label>
+    <input type="text" id="version-peerReview" name="versions[peerReview]">
+    <br><br>
+
+    <label for="version-reviewedDate">Reviewed Date:</label>
+    <input type="date" id="version-reviewedDate" name="versions[reviewedDate]">
+    <br><br>
+
+    <label for="version-authorResponseDate">Author Response Date:</label>
+    <input type="date" id="version-authorResponseDate" name="versions[authorResponseDate]">
+    <br><br>
+
+    <label for="version-license">License:</label>
+    <input type="text" id="version-license" name="versions[license]">
+    <br><br>
+
+    <label for="version-corrections">Corrections:</label>
+    <input type="text" id="version-corrections" name="versions[corrections]">
+    <br><br>
+
+    <label for="version-content">Content:</label>
+    <textarea id="version-content" name="versions[content]"></textarea>
+    <br><br>
+
+    <button type="submit">Submit</button>
+</form>
+
+</body>
+</html>
