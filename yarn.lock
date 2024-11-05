@@ -91,7 +91,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/body-parser@npm:*":
+"@types/body-parser@npm:*, @types/body-parser@npm:^1":
   version: 1.19.5
   resolution: "@types/body-parser@npm:1.19.5"
   dependencies:
@@ -234,7 +234,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:1.20.3":
+"body-parser@npm:1.20.3, body-parser@npm:^1.20.3":
   version: 1.20.3
   resolution: "body-parser@npm:1.20.3"
   dependencies:
@@ -379,8 +379,10 @@ __metadata:
   dependencies:
     "@elifesciences/docmap-ts": "https://github.com/elifesciences/docmap-ts#v0.0.41"
     "@tsconfig/node20": "npm:^20.1.4"
+    "@types/body-parser": "npm:^1"
     "@types/express": "npm:^4"
     "@types/node": "npm:^22.8.7"
+    body-parser: "npm:^1.20.3"
     express: "npm:^4.21.1"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.6.3"

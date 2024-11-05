@@ -1,10 +1,12 @@
 import express, { Express } from 'express';
 import { join } from 'path';
+import BodyParser from 'body-parser';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(BodyParser.urlencoded());
 
 app.get('/', (_, res) => {
   res.sendFile(join(__dirname, 'tmp.html'));
