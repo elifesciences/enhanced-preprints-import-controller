@@ -3,9 +3,10 @@ import { join } from 'path';
 import BodyParser from 'body-parser';
 import { Client } from '@temporalio/client';
 import { ManuscriptData } from '@elifesciences/docmap-ts';
+import { config } from './config';
 
 const app: Express = express();
-const port = process.env.PORT || 5000;
+const port = config.serverPort;
 
 app.use(express.json());
 app.use(BodyParser.urlencoded());
@@ -31,13 +32,13 @@ app.post('/input', async (req, res) => {
   
   // send to temporal
   await client.workflow.start('importManuscriptData', {
-    taskQueue: 'epp',
+    taskQueue: config.temporalTaskQueue,
     workflowId: 'your-workflow-id',
     args: [
       manuscriptData,
     ],
   })
-    .then((result) => `http://localhost:8233/namespaces/default/workflows/${result.workflowId}/${result.firstExecutionRunId}`)
+    .then((result) => `${config.temporalServer}/namespaces/default/workflows/${result.workflowId}/${result.firstExecutionRunId}`)
     .then((url) => res.status(200).send(`Import started <a href="${url}">${url}</a>`))
     .catch((error) => {
       console.error('An error occurred while starting the workflow', error);
