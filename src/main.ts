@@ -46,15 +46,8 @@ app.post('/input', async (req, res) => {
     });
 });
 
-app.get('/previous-imports', (_, res) => {
-  // retrieve list of previous successful imports
-  res.send([]);
-});
-
-app.get('/previous-import/:id', (req, res) => {
-  // retrieve previous import and send to browser
-  console.log(`retrieving records for import: ${req.params.id}`)
-  res.send({});
+app.get('/ping', (_, res) => {
+  res.send('pong');
 });
 
 app.listen(port, () => {
