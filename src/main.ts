@@ -25,10 +25,7 @@ app.post('/input', async (req, res) => {
   // validate
 
   const client = new Client();
-  const manuscriptData: ManuscriptData = {
-    id: form.id,
-    versions: [],
-  };
+  const manuscriptData = JSON.parse(form.manuscript['data']) as ManuscriptData;
 
   // send to temporal
   await client.workflow.start('importManuscriptData', {
