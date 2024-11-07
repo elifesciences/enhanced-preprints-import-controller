@@ -24,7 +24,7 @@ COPY package.json package.json
 COPY src/ src/
 
 EXPOSE 3000
-CMD [ "yarn", "start:dev" ]
+CMD [ "yarn", "start" ]
 
 FROM prod AS dev
 CMD [ "yarn", "start:dev" ]

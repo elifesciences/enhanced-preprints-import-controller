@@ -11,3 +11,5 @@ services:
       start_period: 5s
     ports:
       - 3000:5000
+    volumes:
+      - ./src:/opt/epp/src
