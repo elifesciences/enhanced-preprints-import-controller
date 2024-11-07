@@ -21,11 +21,12 @@ app.get('/input', (_, res) => {
 
 app.post('/input', async (req, res) => {
   const form = req.body;
+  // eslint-disable-next-line no-console
   console.log(`received form response: ${JSON.stringify(form)}`);
   // validate
 
   const client = new Client();
-  const manuscriptData = JSON.parse(form.manuscript['data']) as ManuscriptData;
+  const manuscriptData = JSON.parse(form.manuscript.data) as ManuscriptData;
 
   // send to temporal
   await client.workflow.start('importManuscriptData', {
@@ -38,6 +39,7 @@ app.post('/input', async (req, res) => {
     .then((result) => `${config.temporalServer}/namespaces/default/workflows/${result.workflowId}/${result.firstExecutionRunId}`)
     .then((url) => res.status(200).send(`Import started <a href="${url}">${url}</a>`))
     .catch((error) => {
+      // eslint-disable-next-line no-console
       console.error('An error occurred while starting the workflow', error);
       return res.status(500).send(`An error occurred while processing your request: ${error instanceof Error ? error.message : 'Unknown error'}.`);
     });
@@ -48,5 +50,6 @@ app.get('/ping', (_, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`)
+  // eslint-disable-next-line no-console
+  console.log(`[server]: Server is running at http://localhost:${port}`);
 });
