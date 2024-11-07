@@ -1,6 +1,5 @@
 {
   "name": "enhanced-preprints-import-controller",
-  "packageManager": "yarn@4.3.1",
   "devDependencies": {
     "@elifesciences/docmap-ts": "https://github.com/elifesciences/docmap-ts#v0.0.41",
     "@tsconfig/node20": "^20.1.4",
