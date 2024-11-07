@@ -29,7 +29,7 @@ app.post('/input', async (req, res) => {
     id: form.id,
     versions: [],
   };
-  
+
   // send to temporal
   await client.workflow.start('importManuscriptData', {
     taskQueue: config.temporalTaskQueue,
