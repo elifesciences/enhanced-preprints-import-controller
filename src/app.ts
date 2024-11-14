@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import BodyParser from 'body-parser';
 import { join } from 'path';
-import { Client } from '@temporalio/client';
+import { Client, Connection } from '@temporalio/client';
 import { manuscriptDataSchema } from './form-validation';
 import { config } from './config';
 
@@ -19,15 +19,22 @@ app.get('/input', (_, res) => {
 });
 
 app.post('/input', async (req, res) => {
+  const input = JSON.parse(req.body.manuscript.data);
   // this is not destructured because for some reason that removes the type from the value property and marks it as an any
-  const validationResult = manuscriptDataSchema.validate(req.body, { abortEarly: false, allowUnknown: true });
+  const validationResult = manuscriptDataSchema.validate(input, { abortEarly: false, allowUnknown: true });
   // type for value only exists if its inside this check
   if (validationResult.error === undefined) {
     // eslint-disable-next-line no-console
     console.log(`received form response: ${JSON.stringify(validationResult.value)}`);
     // validate
+    const connection = await Connection.connect({
+      address: config.temporalServer,
+    });
 
-    const client = new Client();
+    const client = new Client({
+      connection,
+      namespace: config.temporalNamespace,
+    });
     // send to temporal
     await client.workflow.start('importManuscriptData', {
       taskQueue: config.temporalTaskQueue,
@@ -36,7 +43,7 @@ app.post('/input', async (req, res) => {
         validationResult.value,
       ],
     })
-      .then((result) => `${config.temporalServer}/namespaces/default/workflows/${result.workflowId}/${result.firstExecutionRunId}`)
+      .then((result) => `${config.temporalUi}/namespaces/default/workflows/${result.workflowId}/${result.firstExecutionRunId}`)
       .then((url) => res.status(200).send(`Import started <a href="${url}">${url}</a>`))
       .catch((error) => {
         // eslint-disable-next-line no-console
@@ -52,7 +59,7 @@ app.post('/input', async (req, res) => {
     });
 
     // eslint-disable-next-line no-console
-    console.error('validation failed for preprint', { error: validationResult.error, warning: validationResult.warning });
+    console.error('validation failed for preprint', { error: JSON.stringify(validationResult.error, null, 4), warning: validationResult.warning });
   }
 });
 

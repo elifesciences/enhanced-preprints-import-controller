@@ -11,6 +11,9 @@ jest.mock('@temporalio/client', () => ({
       start: workflowMock,
     },
   })),
+  Connection: {
+    connect: jest.fn().mockResolvedValue(true),
+  },
 }));
 
 describe('import-controller api tests', () => {
@@ -58,16 +61,17 @@ describe('import-controller api tests', () => {
       });
 
       const url = 'http://localhost:8233/namespaces/default/workflows/1234/4321';
+
       await request(app)
         .post('/input')
-        .send(requiredManuscriptData)
+        .send({ manuscript: { data: JSON.stringify(requiredManuscriptData) } })
         .expect(200, `Import started <a href="${url}">${url}</a>`);
     });
 
     it('returns 400 if the form will not validate', async () => {
       await request(app)
         .post('/input')
-        .send({ foo: 'bar' })
+        .send({ manuscript: { data: JSON.stringify({ foo: 'bar' }) } })
         .expect(400)
         .expect((response) => expect(response.body.message).toStrictEqual('validation failed'));
     });
@@ -77,7 +81,7 @@ describe('import-controller api tests', () => {
 
       await request(app)
         .post('/input')
-        .send(requiredManuscriptData)
+        .send({ manuscript: { data: JSON.stringify(requiredManuscriptData) } })
         .expect(500, 'An error occurred while processing your request: Unknown error.');
     });
   });
