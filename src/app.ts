@@ -43,7 +43,7 @@ app.post('/input', async (req, res) => {
         validationResult.value,
       ],
     })
-      .then((result) => `${config.temporalUi}/namespaces/default/workflows/${result.workflowId}/${result.firstExecutionRunId}`)
+      .then((result) => `${config.temporalUi}/namespaces/${config.temporalNamespace}/workflows/${result.workflowId}/${result.firstExecutionRunId}`)
       .then((url) => res.status(200).send(`Import started <a href="${url}">${url}</a>`))
       .catch((error) => {
         // eslint-disable-next-line no-console
