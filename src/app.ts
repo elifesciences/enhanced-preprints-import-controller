@@ -26,7 +26,7 @@ app.post('/input', async (req, res) => {
   if (validationResult.error === undefined) {
     // eslint-disable-next-line no-console
     console.log(`received form response: ${JSON.stringify(validationResult.value)}`);
-    // validate
+
     const connection = await Connection.connect({
       address: config.temporalServer,
     });
