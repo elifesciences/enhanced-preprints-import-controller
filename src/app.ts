@@ -4,6 +4,7 @@ import { join } from 'path';
 import { Client, Connection } from '@temporalio/client';
 import { manuscriptDataSchema } from './form-validation';
 import { config } from './config';
+import { randomBytes } from 'node:crypto';
 
 const app: Express = express();
 
@@ -38,7 +39,12 @@ app.post('/input', async (req, res) => {
     // send to temporal
     await client.workflow.start('importManuscriptData', {
       taskQueue: config.temporalTaskQueue,
-      workflowId: 'your-workflow-id',
+      workflowId: [
+        'import',
+        validationResult.value.id,
+        (new Date()).toISOString().replace(/[-:.TZ]/g, '').slice(0, 15),
+        randomBytes(4).toString('hex'),
+      ].join('-'),
       args: [
         validationResult.value,
       ],
