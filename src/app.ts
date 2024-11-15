@@ -5,6 +5,7 @@ import { Client, Connection } from '@temporalio/client';
 import { randomBytes } from 'node:crypto';
 import { manuscriptDataSchema } from './form-validation';
 import { config } from './config';
+import { generateForm } from './form';
 
 const app: Express = express();
 
@@ -16,11 +17,23 @@ app.get('/', (_, res) => {
 });
 
 app.get('/input', (_, res) => {
-  res.sendFile(join(__dirname, 'index.html'));
+  res.send(generateForm());
 });
 
 app.post('/input', async (req, res) => {
   const input = JSON.parse(req.body.manuscript.data);
+  const namespace = req.body.temporalNamespace;
+  if (!namespace || namespace.length === 0) {
+    res.status(400).send({
+      result: false,
+      message: 'missing namespace',
+    });
+
+    // eslint-disable-next-line no-console
+    console.error('namespace was not provided');
+    return;
+  }
+
   // this is not destructured because for some reason that removes the type from the value property and marks it as an any
   const validationResult = manuscriptDataSchema.validate(input, { abortEarly: false, allowUnknown: true });
   // type for value only exists if its inside this check
@@ -34,7 +47,7 @@ app.post('/input', async (req, res) => {
 
     const client = new Client({
       connection,
-      namespace: config.temporalNamespace,
+      namespace,
     });
     // send to temporal
     await client.workflow.start('importManuscriptData', {
@@ -49,7 +62,7 @@ app.post('/input', async (req, res) => {
         validationResult.value,
       ],
     })
-      .then((result) => `${config.temporalUi}/namespaces/${config.temporalNamespace}/workflows/${result.workflowId}/${result.firstExecutionRunId}`)
+      .then((result) => `${config.temporalUi}/namespaces/${namespace}/workflows/${result.workflowId}/${result.firstExecutionRunId}`)
       .then((url) => res.status(200).send(`Import started <a href="${url}">${url}</a>`))
       .catch((error) => {
         // eslint-disable-next-line no-console
