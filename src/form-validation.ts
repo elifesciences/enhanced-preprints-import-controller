@@ -40,7 +40,7 @@ const versionedPreprintSchema = Joi.object({
   publishedDate: Joi.date().iso().optional(),
   doi: Joi.string().required(),
   url: Joi.string().optional(),
-  content: Joi.array().items(Joi.string()).optional(),
+  content: Joi.array().items(Joi.string()).min(1).required(),
   license: Joi.string().optional(),
   corrections: Joi.array().items(correctionSchema).optional(),
 });
