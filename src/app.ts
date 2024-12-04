@@ -5,7 +5,7 @@ import { Client, Connection } from '@temporalio/client';
 import { randomBytes } from 'node:crypto';
 import { manuscriptDataSchema } from './form-validation';
 import { config } from './config';
-import { generateForm } from './form';
+import { generateForm, generateScriptForm } from './form';
 
 const app: Express = express();
 
@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(BodyParser.urlencoded());
 
 app.get('/', (_, res) => {
-  res.sendFile(join(__dirname, 'tmp.html'));
+  res.send(generateScriptForm());
 });
 
 app.get('/input', (_, res) => {

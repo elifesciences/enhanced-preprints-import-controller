@@ -33,3 +33,36 @@ export const generateForm = () => (`
     </body>
   </html>
 `);
+
+export const generateScriptForm = ()  => (
+  `
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Import Manuscript</title>
+    </head>
+    <body>
+      
+      <form action="/script" method="post">
+        <h2>Manuscript Data</h2>
+        <label for="msid">MSID:</label>
+        <input id="msid" name="msid" required/>
+        <label for="date">Date:</label>
+        <input id="date" name="date" required/>
+        <label for="evaluation-summary-id">Evaluation Summary ID:</label>
+        <input id="evaluation-summary-id" name="evaluation-summary-id" required/>
+        <label for="peer-review-id">Peer Review ID:</label>
+        <input id="peer-review-id" name="peer-review-id" required/>
+        <label for="author-response-id">Author Response ID:</label>
+        <input id="author-response-id" name="author-response-id" required/>
+
+        <br/>
+    
+        <button type="submit">Submit</button>
+    </form>
+
+    </body>
+  </html>`
+)
