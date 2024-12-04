@@ -27,6 +27,7 @@
   "dependencies": {
     "@elifesciences/docmap-ts": "https://github.com/elifesciences/docmap-ts#v0.0.41",
     "@temporalio/client": "^1.11.3",
+    "axios": "^1.7.9",
     "body-parser": "^1.20.3",
     "express": "^4.21.1",
     "joi": "^17.13.3"

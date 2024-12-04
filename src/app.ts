@@ -1,11 +1,12 @@
 import express, { Express } from 'express';
 import BodyParser from 'body-parser';
-import { join } from 'path';
 import { Client, Connection } from '@temporalio/client';
 import { randomBytes } from 'node:crypto';
 import { manuscriptDataSchema } from './form-validation';
 import { config } from './config';
 import { generateForm, generateScriptForm } from './form';
+import { prepareManuscript } from './manuscriptData';
+
 
 const app: Express = express();
 
@@ -21,11 +22,13 @@ app.get('/input', (_, res) => {
 });
 
 app.post('/script', (req, res) => {
-  // const msid = req.body.msid;
-  // const datePublished = req.body.date;
-  // const evaluationSummaryId = req.body.evaluationSummaryId;
-  // const peerReviewId = req.body.peerReviewId;
-  // const authorResponseId = req.body.authorResponseId;
+  const msid = req.body.msid;
+  const datePublished = req.body.date;
+  const evaluationSummaryId = req.body.evaluationSummaryId;
+  const peerReviewId = req.body.peerReviewId;
+  const authorResponseId = req.body.authorResponseId;
+
+  prepareManuscript(msid, datePublished, evaluationSummaryId, peerReviewId, authorResponseId);
 });
 
 app.post('/input', async (req, res) => {
