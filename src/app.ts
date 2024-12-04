@@ -20,6 +20,14 @@ app.get('/input', (_, res) => {
   res.send(generateForm());
 });
 
+app.post('/script', (req, res) => {
+  // const msid = req.body.msid;
+  // const datePublished = req.body.date;
+  // const evaluationSummaryId = req.body.evaluationSummaryId;
+  // const peerReviewId = req.body.peerReviewId;
+  // const authorResponseId = req.body.authorResponseId;
+});
+
 app.post('/input', async (req, res) => {
   const input = JSON.parse(req.body.manuscript.data);
   const namespace = req.body.temporalNamespace;

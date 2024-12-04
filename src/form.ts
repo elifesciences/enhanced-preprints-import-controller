@@ -52,11 +52,11 @@ export const generateScriptForm = ()  => (
         <label for="date">Date:</label>
         <input id="date" name="date" required/>
         <label for="evaluation-summary-id">Evaluation Summary ID:</label>
-        <input id="evaluation-summary-id" name="evaluation-summary-id" required/>
+        <input id="evaluation-summary-id" name="evaluationSummaryId" required/>
         <label for="peer-review-id">Peer Review ID:</label>
-        <input id="peer-review-id" name="peer-review-id" required/>
+        <input id="peer-review-id" name="peerReviewId" required/>
         <label for="author-response-id">Author Response ID:</label>
-        <input id="author-response-id" name="author-response-id" required/>
+        <input id="author-response-id" name="authorResponseId" required/>
 
         <br/>
     
