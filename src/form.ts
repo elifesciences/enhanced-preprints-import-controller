@@ -47,13 +47,17 @@ export const generateScriptForm = () => (
       <form action="/script" method="post">
         <h2>Manuscript Data</h2>
         <label for="msid">MSID:</label>
-        <input id="msid" name="msid" required/>
-        <label for="datePublished">Date:</label>
-        <input id="datePublished" name="datePublished" required/>
+        <input id="msid" name="msid" required/><br />
+        <label for="override-preprints">Override Biorxiv Preprint:</label>
+        <input id="override-preprints" name="overridePreprints"/><br />
+        <label for="date-published">Published Date:</label>
+        <input id="date-published" name="datePublished" required/><br />
+        <label for="date-revised">Revised Date:</label>
+        <input id="date-revised" name="dateRevised"/><br />
         <label for="evaluation-summary-id">Evaluation Summary ID:</label>
-        <input id="evaluation-summary-id" name="evaluationSummaryId" required/>
+        <input id="evaluation-summary-id" name="evaluationSummaryId" required/><br />
         <label for="peer-review-id">Peer Review ID:</label>
-        <input id="peer-review-id" name="peerReviewId"/>
+        <input id="peer-review-id" name="peerReviewId"/><br />
         <label for="author-response-id">Author Response ID:</label>
         <input id="author-response-id" name="authorResponseId"/>
 

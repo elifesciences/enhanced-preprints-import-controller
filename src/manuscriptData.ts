@@ -158,7 +158,9 @@ const prepareManuscriptStructure = async (
 
 export type PrepareManuscriptData = {
   msid: string,
+  overridePreprints?: string,
   datePublished: Date,
+  dateRevised?: Date,
   evaluationSummaryId: string,
   peerReviewId?: string,
   authorResponseId?: string,

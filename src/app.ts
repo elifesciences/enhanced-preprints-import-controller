@@ -26,7 +26,9 @@ app.post('/script', async (req, res) => {
   if (validationResult.error === undefined) {
     const {
       msid,
+      overridePreprints,
       datePublished,
+      dateRevised,
       evaluationSummaryId,
       peerReviewId,
       authorResponseId,
@@ -34,8 +36,8 @@ app.post('/script', async (req, res) => {
 
     await prepareManuscript(
       msid,
-      [],
-      [datePublished],
+      overridePreprints ? overridePreprints.split(/[^0-9]+/).filter((p) => p.length > 0) : [],
+      [datePublished, dateRevised].filter((d) => d !== undefined),
       evaluationSummaryId,
       ['anonymous'],
       peerReviewId,
