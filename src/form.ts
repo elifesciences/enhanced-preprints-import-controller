@@ -53,7 +53,7 @@ export const generateScriptForm = () => (
         <label for="evaluation-summary-id">Evaluation Summary ID:</label>
         <input id="evaluation-summary-id" name="evaluationSummaryId" required/>
         <label for="peer-review-id">Peer Review ID:</label>
-        <input id="peer-review-id" name="peerReviewId" required/>
+        <input id="peer-review-id" name="peerReviewId"/>
         <label for="author-response-id">Author Response ID:</label>
         <input id="author-response-id" name="authorResponseId"/>
 

@@ -34,7 +34,8 @@ app.post('/script', async (req, res) => {
 
     await prepareManuscript(
       msid,
-      datePublished,
+      [],
+      [datePublished],
       evaluationSummaryId,
       ['anonymous'],
       peerReviewId,
