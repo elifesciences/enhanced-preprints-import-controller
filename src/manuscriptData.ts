@@ -38,9 +38,9 @@ const prepareManuscriptStructure = async (
 ) => {
   const [doi, versionIdentifier] = versionedDoi.split('v');
 
-  const evaluation = (reviewType: string, date: Date, participants: string[], contentUrl: string) => ({
+  const evaluation = (reviewType: string, evaluationDate: Date, participants: string[], contentUrl: string) => ({
     reviewType,
-    date: formatDate(date),
+    date: formatDate(evaluationDate),
     participants: participants.map((name) => ({
       name,
       role: 'curator',
