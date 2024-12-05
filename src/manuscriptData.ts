@@ -1,25 +1,25 @@
 import axios from 'axios';
 
 const bioxriv = async (versionedDoi: string) => axios.get<{
-    results?: {
-      filedate: string,
-      tdm_path: string,
-    }[],
-  }>(`https://api.biorxiv.org/meca_index_v2/${versionedDoi}`)
-    .then((response) => response.data.results ?? [])
-    .then((results) => results.map(({tdm_path: content, filedate: date}) => ({
-      content,
-      date: new Date(date),
-    })));
+  results?: {
+    filedate: string,
+    tdm_path: string,
+  }[],
+}>(`https://api.biorxiv.org/meca_index_v2/${versionedDoi}`)
+  .then((response) => response.data.results ?? [])
+  .then((results) => results.map(({ tdm_path: content, filedate: date }) => ({
+    content,
+    date: new Date(date),
+  })));
 
 const hypothesis = async (id: string) => axios.get<{
-    created: string,
-    uri: string,
-  }>(`https://api.hypothes.is/api/annotations/${id}`)
-    .then((response) => ({
-      preprint: response.data.uri.split('/').slice(-2).join('/'),
-      date: new Date(response.data.created),
-    }));
+  created: string,
+  uri: string,
+}>(`https://api.hypothes.is/api/annotations/${id}`)
+  .then((response) => ({
+    preprint: response.data.uri.split('/').slice(-2).join('/'),
+    date: new Date(response.data.created),
+  }));
 
 const gatherPreprints = (preprints: string[], dates: Date[], specificPreprints: string[]) => {
   // Use a Set to remove duplicates
@@ -40,12 +40,12 @@ const gatherPreprints = (preprints: string[], dates: Date[], specificPreprints: 
 
     return versionA - versionB;
   });
-  
-  uniqueSpecificPreprints.sort((a, b) => parseInt(a) - parseInt(b));
-  
+
+  uniqueSpecificPreprints.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+
   if (uniquePreprints.length < uniqueSpecificPreprints.length) {
     const [doi] = uniquePreprints[uniquePreprints.length - 1].split('v');
-    for (let i = uniquePreprints.length; i < uniqueSpecificPreprints.length; i++) {
+    for (let i = uniquePreprints.length; i < uniqueSpecificPreprints.length; i += 1) {
       uniquePreprints.push(`${doi}v${uniqueSpecificPreprints[i]}`);
     }
   }
@@ -76,7 +76,7 @@ const prepareManuscriptStructure = async (
   peerReviewDate?: Date,
   authorResponse?: string,
   authorResponseDate?: Date,
-)=> {
+) => {
   const gatheredPreprints = gatherPreprints(versionedDois, dates, preprints);
   const [preprintNotRevised] = gatheredPreprints;
 
@@ -91,26 +91,26 @@ const prepareManuscriptStructure = async (
       contentUrl,
     ],
   });
-  
+
   const version = async (
-    id: string,
+    versionId: string,
     versionedDoi: string,
     date: Date,
     versionIdentifier: string,
-    evaluationSummary: string,
-    evaluationSummaryDate: Date,
-    evaluationSummaryParticipants: string[],
-    peerReview?: string,
-    peerReviewDate?: Date,
-    authorResponse?: string,
-    authorResponseDate?: Date,
+    versionEvaluationSummary: string,
+    versionEvaluationSummaryDate: Date,
+    versionEvaluationSummaryParticipants: string[],
+    versionPeerReview?: string,
+    versionPeerReviewDate?: Date,
+    versionAuthorResponse?: string,
+    versionAuthorResponseDate?: Date,
   ) => {
     const [doi, preprintVersionIdentifier] = versionedDoi.split('v');
     const results = await bioxriv(versionedDoi);
     const content = results.map((result) => result.content);
-    
+
     return {
-      id,
+      id: versionId,
       doi,
       publishedDate: formatDate(date),
       versionIdentifier,
@@ -124,13 +124,13 @@ const prepareManuscriptStructure = async (
       },
       license: 'http://creativecommons.org/licenses/by/4.0/',
       peerReview: {
-        reviews: (peerReview && peerReviewDate) ? [evaluation('review-article', peerReviewDate, [], evaluationUrl(peerReview))] : [],
-        evaluationSummary: evaluation('evaluation-summary', evaluationSummaryDate, evaluationSummaryParticipants, evaluationUrl(evaluationSummary)),
-        ...(authorResponse && authorResponseDate ? { authorResponse: evaluation('author-response', authorResponseDate, [], evaluationUrl(authorResponse)) } : {}),
+        reviews: (versionPeerReview && versionPeerReviewDate) ? [evaluation('review-article', versionPeerReviewDate, [], evaluationUrl(versionPeerReview))] : [],
+        evaluationSummary: evaluation('evaluation-summary', versionEvaluationSummaryDate, versionEvaluationSummaryParticipants, evaluationUrl(versionEvaluationSummary)),
+        ...(versionAuthorResponse && versionAuthorResponseDate ? { authorResponse: evaluation('author-response', versionAuthorResponseDate, [], evaluationUrl(versionAuthorResponse)) } : {}),
       },
-      ...(peerReview && peerReviewDate ? { reviewedDate: formatDate(peerReviewDate) } : {}),
+      ...(versionPeerReview && versionPeerReviewDate ? { reviewedDate: formatDate(versionPeerReviewDate) } : {}),
       content,
-      ...(authorResponse && authorResponseDate ? { authorResponseDate: formatDate(authorResponseDate) } : {}),
+      ...(versionAuthorResponse && versionAuthorResponseDate ? { authorResponseDate: formatDate(versionAuthorResponseDate) } : {}),
     };
   };
 
