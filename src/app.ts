@@ -21,14 +21,25 @@ app.get('/input', (_, res) => {
   res.send(generateForm());
 });
 
-app.post('/script', (req, res) => {
-  const msid = req.body.msid;
-  const datePublished = req.body.date;
-  const evaluationSummaryId = req.body.evaluationSummaryId;
-  const peerReviewId = req.body.peerReviewId;
-  const authorResponseId = req.body.authorResponseId;
+app.post('/script', async (req, res) => {
+  const {
+      msid,
+      datePublished,
+      evaluationSummaryId,
+      peerReviewId,
+      authorResponseId,
+    } = req.body;
 
-  prepareManuscript(msid, datePublished, evaluationSummaryId, peerReviewId, authorResponseId);
+  await prepareManuscript(
+    msid,
+    new Date(datePublished),
+    evaluationSummaryId,
+    ['anonymous'],
+    peerReviewId,
+    authorResponseId
+  ).then((manuscript) => res.send(
+    generateForm(JSON.stringify(manuscript, undefined, 2))
+  ));
 });
 
 app.post('/input', async (req, res) => {
