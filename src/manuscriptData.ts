@@ -1,29 +1,25 @@
 import axios from 'axios';
 
-const bioxriv = async (versionedDoi: string) => {
-  return axios.get<{
-    results?: {
-      filedate: string,
-      tdm_path: string,
-    }[],
-  }>(`https://api.biorxiv.org/meca_index_v2/${versionedDoi}`)
-    .then((response) => response.data.results ?? [])
-    .then((results) => results.map(({tdm_path: content, filedate: date}) => ({
-      content,
-      date: new Date(date),
-    })));
-};
+const bioxriv = async (versionedDoi: string) => axios.get<{
+  results?: {
+    filedate: string,
+    tdm_path: string,
+  }[],
+}>(`https://api.biorxiv.org/meca_index_v2/${versionedDoi}`)
+  .then((response) => response.data.results ?? [])
+  .then((results) => results.map(({ tdm_path: content, filedate: date }) => ({
+    content,
+    date: new Date(date),
+  })));
 
-const hypothesis = async (id: string) => {
-  return axios.get<{
-    created: string,
-    uri: string,
-  }>(`https://api.hypothes.is/api/annotations/${id}`)
-    .then((response) => ({
-      preprint: response.data.uri,
-      date: new Date(response.data.created),
-    }));
-};
+const hypothesis = async (id: string) => axios.get<{
+  created: string,
+  uri: string,
+}>(`https://api.hypothes.is/api/annotations/${id}`)
+  .then((response) => ({
+    preprint: response.data.uri,
+    date: new Date(response.data.created),
+  }));
 
 const formatDate = (date: Date) => date.toISOString();
 const evaluationUrl = (id: string) => `https://sciety.org/evaluations/hypothesis:${id}/content`;
@@ -38,10 +34,10 @@ const prepareManuscriptStructure = async (
   peerReview?: string,
   peerReviewDate?: Date,
   authorResponse?: string,
-  authorResponseDate?: Date
-)=> {
+  authorResponseDate?: Date,
+) => {
   const [doi, versionIdentifier] = versionedDoi.split('v');
-  
+
   const evaluation = (reviewType: string, date: Date, participants: string[], contentUrl: string) => ({
     reviewType,
     date: formatDate(date),
@@ -57,7 +53,7 @@ const prepareManuscriptStructure = async (
   return bioxriv(versionedDoi)
     .then((results) => {
       const content = results.map((result) => result.content);
-      
+
       return {
         id,
         manuscript: {
@@ -73,7 +69,7 @@ const prepareManuscriptStructure = async (
             preprint: {
               id: doi,
               doi,
-              ...(results.length > 0 ? { publishedDate: formatDate(date) } : {}),
+              ...(results.length > 0 ? { publishedDate: formatDate(results[0].date) } : {}),
               versionIdentifier,
               content,
               url: `https://www.biorxiv.org/content/${versionedDoi}`,
@@ -93,13 +89,13 @@ const prepareManuscriptStructure = async (
     });
 };
 
-export type prepareManuscriptData = {
+export type PrepareManuscriptData = {
   msid: string,
   datePublished: Date,
   evaluationSummaryId: string,
   peerReviewId?: string,
   authorResponseId?: string
-}
+};
 
 export const prepareManuscript = async (
   id: string,
@@ -107,7 +103,7 @@ export const prepareManuscript = async (
   evaluationSummary: string,
   evaluationSummaryParticipants: string[],
   peerReview?: string,
-  authorResponse?: string
+  authorResponse?: string,
 ) => {
   const { preprint, date: evaluationSummaryDate } = await hypothesis(evaluationSummary);
   const { date: peerReviewDate } = peerReview ? await hypothesis(peerReview) : { date: null };
@@ -122,6 +118,6 @@ export const prepareManuscript = async (
     peerReviewDate ? peerReview : undefined,
     peerReviewDate ?? undefined,
     authorResponseDate ? authorResponse : undefined,
-    authorResponseDate ?? undefined
+    authorResponseDate ?? undefined,
   );
 };

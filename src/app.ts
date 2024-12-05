@@ -7,7 +7,6 @@ import { config } from './config';
 import { generateForm, generateScriptForm } from './form';
 import { prepareManuscript } from './manuscriptData';
 
-
 const app: Express = express();
 
 app.use(express.json());
@@ -23,12 +22,12 @@ app.get('/input', (_, res) => {
 
 app.post('/script', async (req, res) => {
   const {
-      msid,
-      datePublished,
-      evaluationSummaryId,
-      peerReviewId,
-      authorResponseId,
-    } = req.body;
+    msid,
+    datePublished,
+    evaluationSummaryId,
+    peerReviewId,
+    authorResponseId,
+  } = req.body;
 
   await prepareManuscript(
     msid,
@@ -36,9 +35,9 @@ app.post('/script', async (req, res) => {
     evaluationSummaryId,
     ['anonymous'],
     peerReviewId,
-    authorResponseId
+    authorResponseId,
   ).then((manuscript) => res.send(
-    generateForm(JSON.stringify(manuscript, undefined, 2))
+    generateForm(JSON.stringify(manuscript, undefined, 2)),
   ));
 });
 
