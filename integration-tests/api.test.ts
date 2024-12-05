@@ -26,9 +26,9 @@ describe('import-controller api tests', () => {
       await request(app)
         .get('/')
         .expect(200)
-        .expect('Content-Type', 'text/html; charset=UTF-8')
+        .expect('Content-Type', 'text/html; charset=utf-8')
         .expect((response) => {
-          expect(response.text).toContain('Hello, World!');
+          expect(response.text).toContain('MSID:');
         });
     });
   });

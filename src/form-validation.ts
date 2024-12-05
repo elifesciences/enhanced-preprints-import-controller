@@ -1,6 +1,6 @@
 import { ManuscriptData } from '@elifesciences/docmap-ts';
 import Joi from 'joi';
-import { prepareManuscriptData } from './manuscriptData';
+import { PrepareManuscriptData } from './manuscriptData';
 
 const relatedContentItemSchema = Joi.object({
   type: Joi.string().required(),
@@ -91,10 +91,10 @@ export const manuscriptDataSchema = Joi.object<ManuscriptData>({
   versions: Joi.array().items(versionedReviewedPreprintSchema, versionedPreprintSchema).min(1).required(),
 });
 
-export const scriptFormSchema = Joi.object<prepareManuscriptData>({
+export const scriptFormSchema = Joi.object<PrepareManuscriptData>({
   msid: Joi.string().required(),
   datePublished: Joi.date().iso().required(),
   evaluationSummaryId: Joi.string().required(),
   peerReviewId: Joi.string().optional(),
   authorResponseId: Joi.string().optional(),
-})
+});

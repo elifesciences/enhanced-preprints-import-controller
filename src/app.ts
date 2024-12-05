@@ -2,11 +2,10 @@ import express, { Express } from 'express';
 import BodyParser from 'body-parser';
 import { Client, Connection } from '@temporalio/client';
 import { randomBytes } from 'node:crypto';
-import { manuscriptDataSchema } from './form-validation';
+import { manuscriptDataSchema, scriptFormSchema } from './form-validation';
 import { config } from './config';
 import { generateForm, generateScriptForm } from './form';
 import { prepareManuscript } from './manuscriptData';
-
 
 const app: Express = express();
 
@@ -21,14 +20,44 @@ app.get('/input', (_, res) => {
   res.send(generateForm());
 });
 
-app.post('/script', (req, res) => {
-  const msid = req.body.msid;
-  const datePublished = req.body.date;
-  const evaluationSummaryId = req.body.evaluationSummaryId;
-  const peerReviewId = req.body.peerReviewId;
-  const authorResponseId = req.body.authorResponseId;
+app.post('/script', async (req, res) => {
+  const validationResult = scriptFormSchema.validate(req.body, { abortEarly: false, allowUnknown: true });
 
-  prepareManuscript(msid, datePublished, evaluationSummaryId, peerReviewId, authorResponseId);
+  if (validationResult.error === undefined) {
+    const {
+      msid,
+      datePublished,
+      evaluationSummaryId,
+      peerReviewId,
+      authorResponseId,
+    } = validationResult.value;
+
+    await prepareManuscript(
+      msid,
+      datePublished,
+      evaluationSummaryId,
+      ['anonymous'],
+      peerReviewId,
+      authorResponseId,
+    ).then((manuscript) => res.send(
+      generateForm(JSON.stringify(manuscript, undefined, 2)),
+    )).catch((err) => {
+      res.status(400).send('Bad Request');
+
+      // eslint-disable-next-line no-console
+      console.error(`script error: ${JSON.stringify(err)}`);
+    });
+  } else {
+    res.status(400).send({
+      result: false,
+      message: 'validation failed',
+      error: validationResult.error,
+      warning: validationResult.warning,
+    });
+
+    // eslint-disable-next-line no-console
+    console.error('validation failed for script form', { error: JSON.stringify(validationResult.error, null, 4), warning: validationResult.warning });
+  }
 });
 
 app.post('/input', async (req, res) => {
