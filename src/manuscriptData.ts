@@ -19,7 +19,18 @@ const hypothesis = async (id: string) => axios.get<{
   .then((response) => ({
     preprint: response.data.uri.split('/').slice(-2).join('/'),
     date: new Date(response.data.created),
-  }));
+    error: null,
+  }))
+  .catch((error) => {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return {
+        preprint: null,
+        date: null,
+        error: `Resource with ID ${id} not found.`
+      };
+    }
+    throw error;
+  });
 
 const gatherPreprints = (preprints: string[], dates: Date[], specificPreprints: string[]) => {
   // Use a Set to remove duplicates
@@ -178,10 +189,48 @@ export const prepareManuscript = async (
   const hypothesisDefault = {
     preprint: null,
     date: null,
+    error: null,
   };
-  const { preprint: evaluationSummaryPreprint, date: evaluationSummaryDate } = await hypothesis(evaluationSummary);
-  const { preprint: peerReviewPreprint, date: peerReviewDate } = peerReview ? await hypothesis(peerReview) : hypothesisDefault;
-  const { preprint: authorResponsePreprint, date: authorResponseDate } = authorResponse ? await hypothesis(authorResponse) : hypothesisDefault;
+  
+  const [
+    {
+      preprint: evaluationSummaryPreprint,
+      date: evaluationSummaryDate,
+      error: evaluationSummaryError,
+    },
+    {
+      preprint: peerReviewPreprint,
+      date: peerReviewDate,
+      error: peerReviewError,
+    },
+    {
+      preprint: authorResponsePreprint,
+      date: authorResponseDate,
+      error: authorResponseError,
+    },
+  ] = await Promise.all([
+    hypothesis(evaluationSummary),
+    ...[
+      peerReview,
+      authorResponse,
+    ].map((evaluationId) => evaluationId ? hypothesis(evaluationId) : hypothesisDefault)
+  ]);
+  
+  const errors = [
+    evaluationSummaryError,
+    peerReviewError,
+    authorResponseError,
+  ]
+    .filter((e) => e !== null);
+
+
+  if (evaluationSummary === null || evaluationSummaryDate === null || errors.length > 0) {
+    if (errors.length === 0) {
+      errors.push('Evaluation summary not found!');
+    }
+    throw new Error(errors.join(', '));
+  }
+
   return prepareManuscriptStructure(
     id,
     [

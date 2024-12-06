@@ -4,7 +4,7 @@ import { Client, Connection } from '@temporalio/client';
 import { randomBytes } from 'node:crypto';
 import { manuscriptDataSchema, scriptFormSchema } from './form-validation';
 import { config } from './config';
-import { generateForm, generateScriptForm } from './form';
+import { generateForm, generateScriptForm, htmlPage } from './form';
 import { prepareManuscript } from './manuscriptData';
 
 const app: Express = express();
@@ -37,7 +37,7 @@ app.post('/script', async (req, res) => {
     await prepareManuscript(
       msid,
       overridePreprints ? overridePreprints.split(/[^0-9]+/).filter((p) => p.length > 0) : [],
-      [datePublished, dateRevised].filter((d) => d !== undefined),
+      [datePublished, dateRevised].filter((d) => d !== undefined).map((d) => new Date(d)),
       evaluationSummaryId,
       ['anonymous'],
       peerReviewId,
@@ -45,18 +45,19 @@ app.post('/script', async (req, res) => {
     ).then((manuscript) => res.send(
       generateForm(JSON.stringify(manuscript, undefined, 2)),
     )).catch((err) => {
-      res.status(400).send('Bad Request');
+      const message = err.toString();
+      res.status(400).send(htmlPage('Bad Request', `Bad Request: ${message}`));
 
       // eslint-disable-next-line no-console
-      console.error(`script error: ${JSON.stringify(err)}`);
+      console.error(`script error: ${message}`);
     });
   } else {
-    res.status(400).send({
+    res.status(400).send(htmlPage('Validation Error', JSON.stringify({
       result: false,
       message: 'validation failed',
       error: validationResult.error,
       warning: validationResult.warning,
-    });
+    }, undefined, 2)));
 
     // eslint-disable-next-line no-console
     console.error('validation failed for script form', { error: JSON.stringify(validationResult.error, null, 4), warning: validationResult.warning });
