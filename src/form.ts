@@ -22,9 +22,9 @@ export const generateForm = (defaultValue?: string) => htmlPage(
     <label for="manuscript-data">Input JSON:</label>
     <textarea id="manuscript-data" style="width: 600px; height: 280px;" name="manuscript[data]" required>
     ${defaultValue ?? JSON.stringify({
-      id: '[ID]',
-      versions: [],
-    }, undefined, 2)}</textarea>
+    id: '[ID]',
+    versions: [],
+  }, undefined, 2)}</textarea>
     <br/>
     <label for="temporal_namespace">Select a Namespace:</label>
     <select id="temporal_namespace" name="temporalNamespace" required>
@@ -34,7 +34,7 @@ export const generateForm = (defaultValue?: string) => htmlPage(
     <br><br>
 
     <button type="submit">Submit</button>
-  </form>`
+  </form>`,
 );
 
 export const generateScriptForm = () => htmlPage(

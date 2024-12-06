@@ -26,7 +26,7 @@ const hypothesis = async (id: string) => axios.get<{
       return {
         preprint: null,
         date: null,
-        error: `Resource with ID ${id} not found.`
+        error: `Resource with ID ${id} not found.`,
       };
     }
     throw error;
@@ -191,7 +191,7 @@ export const prepareManuscript = async (
     date: null,
     error: null,
   };
-  
+
   const [
     {
       preprint: evaluationSummaryPreprint,
@@ -213,16 +213,15 @@ export const prepareManuscript = async (
     ...[
       peerReview,
       authorResponse,
-    ].map((evaluationId) => evaluationId ? hypothesis(evaluationId) : hypothesisDefault)
+    ].map((evaluationId) => (evaluationId ? hypothesis(evaluationId) : hypothesisDefault)),
   ]);
-  
+
   const errors = [
     evaluationSummaryError,
     peerReviewError,
     authorResponseError,
   ]
     .filter((e) => e !== null);
-
 
   if (evaluationSummary === null || evaluationSummaryDate === null || errors.length > 0) {
     if (errors.length === 0) {
