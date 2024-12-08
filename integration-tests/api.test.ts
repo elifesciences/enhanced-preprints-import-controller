@@ -22,13 +22,13 @@ describe('import-controller api tests', () => {
   });
 
   describe('GET /', () => {
-    it('returns the "hello, world!" page', async () => {
+    it('returns the Dashboard page', async () => {
       await request(app)
         .get('/')
         .expect(200)
         .expect('Content-Type', 'text/html; charset=utf-8')
         .expect((response) => {
-          expect(response.text).toContain('MSID:');
+          expect(response.text).toContain('Import Controller');
         });
     });
   });
@@ -41,10 +41,10 @@ describe('import-controller api tests', () => {
     });
   });
 
-  describe('GET /input', () => {
+  describe('GET /manuscript-data', () => {
     it('returns the form page', async () => {
       await request(app)
-        .get('/input')
+        .get('/manuscript-data')
         .expect(200)
         .expect('Content-Type', 'text/html; charset=utf-8')
         .expect((response) => {
@@ -53,7 +53,7 @@ describe('import-controller api tests', () => {
     });
   });
 
-  describe('POST /input', () => {
+  describe('POST /manuscript-data', () => {
     it('validates form input', async () => {
       workflowMock.mockResolvedValue({
         workflowId: 1234,
@@ -63,14 +63,14 @@ describe('import-controller api tests', () => {
       const url = 'http://localhost:8233/namespaces/foo/workflows/1234/4321';
 
       await request(app)
-        .post('/input')
+        .post('/manuscript-data')
         .send({ manuscript: { data: JSON.stringify(requiredManuscriptData) }, temporalNamespace: 'foo' })
         .expect(200, `Import started <a href="${url}">${url}</a>`);
     });
 
     it('returns 400 if namespace is not provided', async () => {
       await request(app)
-        .post('/input')
+        .post('/manuscript-data')
         .send({ manuscript: { data: JSON.stringify({ foo: 'bar' }) }})
         .expect(400)
         .expect((response) => expect(response.body.message).toStrictEqual('missing namespace'));
@@ -78,7 +78,7 @@ describe('import-controller api tests', () => {
 
     it('returns 400 if the form will not validate', async () => {
       await request(app)
-        .post('/input')
+        .post('/manuscript-data')
         .send({ manuscript: { data: JSON.stringify({ foo: 'bar' }) }, temporalNamespace: 'foo' })
         .expect(400)
         .expect((response) => expect(response.body.message).toStrictEqual('validation failed'));
@@ -88,7 +88,7 @@ describe('import-controller api tests', () => {
       workflowMock.mockRejectedValue(false);
 
       await request(app)
-        .post('/input')
+        .post('/manuscript-data')
         .send({ manuscript: { data: JSON.stringify(requiredManuscriptData) }, temporalNamespace: 'foo' })
         .expect(500, 'An error occurred while processing your request: Unknown error.');
     });
