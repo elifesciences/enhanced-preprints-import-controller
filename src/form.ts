@@ -15,13 +15,12 @@ export const htmlPage = (title: string, content: string) => (`
   </html>
 `);
 
-export const generateForm = (defaultValue?: string) => htmlPage(
+export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
   'Import Manuscript',
-  `<form action="/input" method="post">
+  `<form action="/manuscript-data" method="post">
     <h2>Manuscript Data</h2>
     <label for="manuscript-data">Input JSON:</label>
-    <textarea id="manuscript-data" style="width: 600px; height: 280px;" name="manuscript[data]" required>
-    ${defaultValue ?? JSON.stringify({
+    <textarea id="manuscript-data" style="width: 600px; height: 280px;" name="manuscript[data]" required>${defaultValue ?? JSON.stringify({
     id: '[ID]',
     versions: [],
   }, undefined, 2)}</textarea>
@@ -37,10 +36,10 @@ export const generateForm = (defaultValue?: string) => htmlPage(
   </form>`,
 );
 
-export const generateScriptForm = () => htmlPage(
+export const generateManuscriptDataTwoStepsForm = () => htmlPage(
   '',
-  `<form action="/script" method="post">
-    <h2>Manuscript Data</h2>
+  `<form action="/manuscript-data-two-steps" method="post">
+    <h2>Manuscript Data (2 steps)</h2>
     <label for="msid">MSID:</label>
     <input id="msid" name="msid" required/><br />
     <label for="override-preprints">Override Biorxiv Preprint:</label>

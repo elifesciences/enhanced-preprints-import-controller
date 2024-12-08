@@ -4,7 +4,7 @@ import { Client, Connection } from '@temporalio/client';
 import { randomBytes } from 'node:crypto';
 import { manuscriptDataSchema, scriptFormSchema } from './form-validation';
 import { config } from './config';
-import { generateForm, generateScriptForm, htmlPage } from './form';
+import { generateManuscriptDataForm, generateManuscriptDataTwoStepsForm, htmlPage } from './form';
 import { prepareManuscript } from './manuscriptData';
 
 const app: Express = express();
@@ -13,14 +13,23 @@ app.use(express.json());
 app.use(BodyParser.urlencoded());
 
 app.get('/', (_, res) => {
-  res.send(generateScriptForm());
+  res.send(htmlPage('Import Controller', `
+  <ul>
+    <li><a href="/manuscript-data">Import Manuscript Data</a></li>
+    <li><a href="/manuscript-data-two-steps">Import Manuscript Data (2 steps)</a></li>
+  </ul>
+  `));
 });
 
-app.get('/input', (_, res) => {
-  res.send(generateForm());
+app.get('/manuscript-data-two-steps', (_, res) => {
+  res.send(generateManuscriptDataTwoStepsForm());
 });
 
-app.post('/script', async (req, res) => {
+app.get('/manuscript-data', (_, res) => {
+  res.send(generateManuscriptDataForm());
+});
+
+app.post('/manuscript-data-two-steps', async (req, res) => {
   const validationResult = scriptFormSchema.validate(req.body, { abortEarly: false, allowUnknown: true });
 
   if (validationResult.error === undefined) {
@@ -43,7 +52,7 @@ app.post('/script', async (req, res) => {
       peerReviewId,
       authorResponseId,
     ).then((manuscript) => res.send(
-      generateForm(JSON.stringify(manuscript, undefined, 2)),
+      generateManuscriptDataForm(JSON.stringify(manuscript, undefined, 2)),
     )).catch((err) => {
       const message = err.toString();
       res.status(400).send(htmlPage('Bad Request', `Bad Request: ${message}`));
@@ -64,7 +73,7 @@ app.post('/script', async (req, res) => {
   }
 });
 
-app.post('/input', async (req, res) => {
+app.post('/manuscript-data', async (req, res) => {
   const input = JSON.parse(req.body.manuscript.data);
   const namespace = req.body.temporalNamespace;
   if (!namespace || namespace.length === 0) {
