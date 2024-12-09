@@ -77,7 +77,7 @@ const evaluationUrl = (id: string) => `https://sciety.org/evaluations/hypothesis
 
 const prepareManuscriptStructure = async (
   id: string,
-  versionedDois: string[],
+  preprintVersionedDois: string[],
   preprints: string[],
   dates: Date[],
   evaluationSummary: string,
@@ -88,7 +88,7 @@ const prepareManuscriptStructure = async (
   authorResponse?: string,
   authorResponseDate?: Date,
 ) => {
-  const gatheredPreprints = gatherPreprints(versionedDois, dates, preprints);
+  const gatheredPreprints = gatherPreprints(preprintVersionedDois, dates, preprints);
   const [preprintNotRevised] = gatheredPreprints;
 
   const evaluation = (reviewType: string, date: Date, participants: string[], contentUrl: string) => ({
@@ -115,6 +115,7 @@ const prepareManuscriptStructure = async (
     versionPeerReviewDate?: Date,
     versionAuthorResponse?: string,
     versionAuthorResponseDate?: Date,
+    versionDoi?: string,
   ) => {
     const [preprintDoi, preprintVersionIdentifier] = preprintVersionedDoi.split('v');
     const results = await bioxriv(preprintVersionedDoi);
@@ -122,7 +123,7 @@ const prepareManuscriptStructure = async (
 
     return {
       id: versionId,
-      doi: preprintDoi,
+      doi: versionDoi || preprintDoi,
       publishedDate: formatDate(date),
       versionIdentifier,
       preprint: {
