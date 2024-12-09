@@ -105,7 +105,7 @@ const prepareManuscriptStructure = async (
 
   const version = async (
     versionId: string,
-    versionedDoi: string,
+    preprintVersionedDoi: string,
     date: Date,
     versionIdentifier: string,
     versionEvaluationSummary: string,
@@ -116,8 +116,8 @@ const prepareManuscriptStructure = async (
     versionAuthorResponse?: string,
     versionAuthorResponseDate?: Date,
   ) => {
-    const [preprintDoi, preprintVersionIdentifier] = versionedDoi.split('v');
-    const results = await bioxriv(versionedDoi);
+    const [preprintDoi, preprintVersionIdentifier] = preprintVersionedDoi.split('v');
+    const results = await bioxriv(preprintVersionedDoi);
     const content = results.map((result) => result.content);
 
     return {
@@ -131,7 +131,7 @@ const prepareManuscriptStructure = async (
         ...(results.length > 0 ? { publishedDate: formatDate(results[0].date) } : {}),
         versionIdentifier: preprintVersionIdentifier,
         content,
-        url: `https://www.biorxiv.org/content/${versionedDoi}`,
+        url: `https://www.biorxiv.org/content/${preprintVersionedDoi}`,
       },
       license: 'http://creativecommons.org/licenses/by/4.0/',
       peerReview: {
