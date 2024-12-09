@@ -94,6 +94,7 @@ const prepareManuscriptStructure = async (
   const evaluation = (reviewType: string, date: Date, participants: string[], contentUrl: string) => ({
     reviewType,
     date: formatDate(date),
+    doi: `[ ${reviewType}-doi ]`,
     participants: participants.map((name) => ({
       name,
       role: 'curator',
@@ -123,7 +124,7 @@ const prepareManuscriptStructure = async (
 
     return {
       id: versionId,
-      doi: versionDoi || preprintDoi,
+      doi: versionDoi || '[ version-doi ]',
       publishedDate: formatDate(date),
       versionIdentifier,
       preprint: {
@@ -149,7 +150,7 @@ const prepareManuscriptStructure = async (
   return {
     id,
     manuscript: {
-      doi: preprintNotRevised.doi,
+      doi: '[ umbrella-doi ]',
       publishedDate: formatDate(preprintNotRevised.date),
     },
     versions: await Promise.all(gatheredPreprints.map(async (preprint, i) => version(

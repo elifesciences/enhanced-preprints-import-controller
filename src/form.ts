@@ -73,10 +73,6 @@ export const generateManuscriptDataTwoStepsAllEvaluationsForm = () => htmlPage(
       <input id="author-response-id" name="authorResponseId"/>
     </p>
     <p>
-      <label for="doi">Custom DOI:</label>
-      <input id="doi" name="doi"/>
-    </p>
-    <p>
       <button type="submit">Submit</button>
     </p>
   </form>`,
