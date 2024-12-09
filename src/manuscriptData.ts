@@ -116,18 +116,18 @@ const prepareManuscriptStructure = async (
     versionAuthorResponse?: string,
     versionAuthorResponseDate?: Date,
   ) => {
-    const [doi, preprintVersionIdentifier] = versionedDoi.split('v');
+    const [preprintDoi, preprintVersionIdentifier] = versionedDoi.split('v');
     const results = await bioxriv(versionedDoi);
     const content = results.map((result) => result.content);
 
     return {
       id: versionId,
-      doi,
+      doi: preprintDoi,
       publishedDate: formatDate(date),
       versionIdentifier,
       preprint: {
-        id: doi,
-        doi,
+        id: preprintDoi,
+        doi: preprintDoi,
         ...(results.length > 0 ? { publishedDate: formatDate(results[0].date) } : {}),
         versionIdentifier: preprintVersionIdentifier,
         content,
