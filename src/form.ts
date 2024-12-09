@@ -19,44 +19,61 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
   'Import Manuscript',
   `<form action="/manuscript-data" method="post">
     <h2>Manuscript Data</h2>
+    <p>
     <label for="manuscript-data">Input JSON:</label>
-    <textarea id="manuscript-data" style="width: 600px; height: 280px;" name="manuscript[data]" required>${defaultValue ?? JSON.stringify({
+  <textarea id="manuscript-data" style="width: 600px; height: 280px;" name="manuscript[data]" required>${defaultValue ?? JSON.stringify({
     id: '[ID]',
     versions: [],
   }, undefined, 2)}</textarea>
-    <br/>
-    <label for="temporal_namespace">Select a Namespace:</label>
-    <select id="temporal_namespace" name="temporalNamespace" required>
+    </p>
+    <p>
+      <label for="temporal_namespace">Select a Namespace:</label>
+      <select id="temporal_namespace" name="temporalNamespace" required>
         <option value="" disabled selected hidden>-- Please choose an option --</option>
         ${config.temporalNamespace.split(',').map((ns) => `<option value="${ns}">${ns}</option>`).join('\n')}
-    </select>
-    <br><br>
-
-    <button type="submit">Submit</button>
+      </select>
+    </p>
+    <p>
+      <button type="submit">Submit</button>
+    </p>
   </form>`,
 );
 
-export const generateManuscriptDataTwoStepsForm = () => htmlPage(
-  '',
-  `<form action="/manuscript-data-two-steps" method="post">
+export const generateManuscriptDataTwoStepsAllEvaluationsForm = () => htmlPage(
+  'Import Manuscript (2 steps) - all evaluations attached to all preprints',
+  `<form action="/manuscript-data-two-steps-all-evaluations" method="post">
     <h2>Manuscript Data (2 steps)</h2>
-    <label for="msid">MSID:</label>
-    <input id="msid" name="msid" required/><br />
-    <label for="override-preprints">Override Biorxiv Preprint:</label>
-    <input id="override-preprints" name="overridePreprints"/><br />
-    <label for="date-published">Published Date:</label>
-    <input id="date-published" name="datePublished" required/><br />
-    <label for="date-revised">Revised Date:</label>
-    <input id="date-revised" name="dateRevised"/><br />
-    <label for="evaluation-summary-id">Evaluation Summary ID:</label>
-    <input id="evaluation-summary-id" name="evaluationSummaryId" required/><br />
-    <label for="peer-review-id">Peer Review ID:</label>
-    <input id="peer-review-id" name="peerReviewId"/><br />
-    <label for="author-response-id">Author Response ID:</label>
-    <input id="author-response-id" name="authorResponseId"/>
-
-    <br/>
-
-    <button type="submit">Submit</button>
+    <p><em>all evaluations attached to all preprints</em></p>
+    <p>
+      <label for="msid">MSID:</label>
+      <input id="msid" name="msid" required/>
+    </p>
+    <p>
+      <label for="override-preprints">Override Biorxiv Preprint:</label>
+      <input id="override-preprints" name="overridePreprints"/>
+    </p>
+    <p>
+      <label for="date-published">Published Date:</label>
+      <input id="date-published" name="datePublished" required/>
+    </p>
+    <p>
+      <label for="date-revised">Revised Date:</label>
+      <input id="date-revised" name="dateRevised"/>
+    </p>
+    <p>
+      <label for="evaluation-summary-id">Evaluation Summary ID:</label>
+      <input id="evaluation-summary-id" name="evaluationSummaryId" required/>
+    </p>
+    <p>
+      <label for="peer-review-id">Peer Review ID:</label>
+      <input id="peer-review-id" name="peerReviewId"/>
+    </p>
+    <p>
+      <label for="author-response-id">Author Response ID:</label>
+      <input id="author-response-id" name="authorResponseId"/>
+    </p>
+    <p>
+      <button type="submit">Submit</button>
+    </p>
   </form>`,
 );

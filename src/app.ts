@@ -4,7 +4,11 @@ import { Client, Connection } from '@temporalio/client';
 import { randomBytes } from 'node:crypto';
 import { manuscriptDataSchema, scriptFormSchema } from './form-validation';
 import { config } from './config';
-import { generateManuscriptDataForm, generateManuscriptDataTwoStepsForm, htmlPage } from './form';
+import {
+  generateManuscriptDataForm,
+  generateManuscriptDataTwoStepsAllEvaluationsForm,
+  htmlPage,
+} from './form';
 import { prepareManuscript } from './manuscriptData';
 
 const app: Express = express();
@@ -16,20 +20,20 @@ app.get('/', (_, res) => {
   res.send(htmlPage('Import Controller', `
   <ul>
     <li><a href="/manuscript-data">Import Manuscript Data</a></li>
-    <li><a href="/manuscript-data-two-steps">Import Manuscript Data (2 steps)</a></li>
+    <li><a href="/manuscript-data-two-steps-all-evaluations">Import Manuscript Data (2 steps)</a> - <em>all evaluations attached to all preprints</em></li>
   </ul>
   `));
 });
 
-app.get('/manuscript-data-two-steps', (_, res) => {
-  res.send(generateManuscriptDataTwoStepsForm());
+app.get('/manuscript-data-two-steps-all-evaluations', (_, res) => {
+  res.send(generateManuscriptDataTwoStepsAllEvaluationsForm());
 });
 
 app.get('/manuscript-data', (_, res) => {
   res.send(generateManuscriptDataForm());
 });
 
-app.post('/manuscript-data-two-steps', async (req, res) => {
+app.post('/manuscript-data-two-steps-all-evaluations', async (req, res) => {
   const validationResult = scriptFormSchema.validate(req.body, { abortEarly: false, allowUnknown: true });
 
   if (validationResult.error === undefined) {
