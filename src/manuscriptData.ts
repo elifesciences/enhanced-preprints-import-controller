@@ -175,6 +175,7 @@ export type PrepareManuscriptData = {
   evaluationSummaryId: string,
   peerReviewId?: string,
   authorResponseId?: string,
+  doi?: string,
 };
 
 export const prepareManuscript = async (

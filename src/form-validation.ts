@@ -100,4 +100,5 @@ export const scriptFormSchema = Joi.object<PrepareManuscriptData>({
   evaluationSummaryId: Joi.string().trim().required(),
   peerReviewId: Joi.string().trim().optional().empty(''),
   authorResponseId: Joi.string().trim().optional().empty(''),
+  doi: Joi.string().trim().optional().empty(''),
 });
