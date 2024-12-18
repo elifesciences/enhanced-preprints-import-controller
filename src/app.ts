@@ -117,7 +117,7 @@ app.post('/manuscript-data', async (req, res) => {
       ].join('-'),
       args: [
         {
-          data: validationResult.value, 
+          data: validationResult.value,
         },
       ],
     })
