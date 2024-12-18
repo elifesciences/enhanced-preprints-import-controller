@@ -116,7 +116,9 @@ app.post('/manuscript-data', async (req, res) => {
         randomBytes(4).toString('hex'),
       ].join('-'),
       args: [
-        validationResult.value,
+        {
+          data: validationResult.value, 
+        },
       ],
     })
       .then((result) => `${config.temporalUi}/namespaces/${namespace}/workflows/${result.workflowId}/${result.firstExecutionRunId}`)
