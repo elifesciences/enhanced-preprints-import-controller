@@ -15,6 +15,27 @@ export const htmlPage = (title: string, content: string) => (`
   </html>
 `);
 
+export const generateImportDocmapForm = () => htmlPage(
+  'Import Docmap',
+  `<form action="/import-docmap" method="post">
+    <h2>Import Docmap</h2>
+    <p>
+      <label for="docmap">Docmap:</label>
+      <input id="docmap" name="docmap" required/>
+    </p>
+    <p>
+      <label for="temporal_namespace">Select a Namespace:</label>
+      <select id="temporal_namespace" name="temporalNamespace" required>
+        <option value="" disabled selected hidden>-- Please choose an option --</option>
+        ${config.temporalNamespace.split(',').map((ns) => `<option value="${ns}">${ns}</option>`).join('\n')}
+      </select>
+    </p>
+    <p>
+      <button type="submit">Submit</button>
+    </p>
+  </form>`,
+);
+
 export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
   'Import Manuscript',
   `<form action="/manuscript-data" method="post">

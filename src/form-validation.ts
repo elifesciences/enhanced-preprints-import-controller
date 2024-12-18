@@ -102,3 +102,7 @@ export const scriptFormSchema = Joi.object<PrepareManuscriptData>({
   authorResponseId: Joi.string().trim().optional().empty(''),
   doi: Joi.string().trim().optional().empty(''),
 });
+
+export const importDocmapFormSchema = Joi.object<{ docmap: string }>({
+  docmap: Joi.string().trim().required(),
+});
