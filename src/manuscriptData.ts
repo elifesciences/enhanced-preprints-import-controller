@@ -109,9 +109,9 @@ const prepareManuscriptStructure = async (
     preprintVersionedDoi: string,
     date: Date,
     versionIdentifier: string,
-    versionEvaluationSummary: string,
-    versionEvaluationSummaryDate: Date,
-    versionEvaluationSummaryParticipants: string[],
+    versionEvaluationSummary?: string,
+    versionEvaluationSummaryDate?: Date,
+    versionEvaluationSummaryParticipants?: string[],
     versionPeerReview?: string,
     versionPeerReviewDate?: Date,
     versionAuthorResponse?: string,
@@ -138,7 +138,11 @@ const prepareManuscriptStructure = async (
       license: 'http://creativecommons.org/licenses/by/4.0/',
       peerReview: {
         reviews: (versionPeerReview && versionPeerReviewDate) ? [evaluation('review-article', versionPeerReviewDate, [], evaluationUrl(versionPeerReview))] : [],
-        evaluationSummary: evaluation('evaluation-summary', versionEvaluationSummaryDate, versionEvaluationSummaryParticipants, evaluationUrl(versionEvaluationSummary)),
+        ...(
+          versionEvaluationSummary && versionEvaluationSummaryDate && versionEvaluationSummaryParticipants
+            ? { evaluationSummary: evaluation('evaluation-summary', versionEvaluationSummaryDate, versionEvaluationSummaryParticipants, evaluationUrl(versionEvaluationSummary)) }
+            : {}
+        ),
         ...(versionAuthorResponse && versionAuthorResponseDate ? { authorResponse: evaluation('author-response', versionAuthorResponseDate, [], evaluationUrl(versionAuthorResponse)) } : {}),
       },
       ...(versionPeerReview && versionPeerReviewDate ? { reviewedDate: formatDate(versionPeerReviewDate) } : {}),
@@ -147,25 +151,40 @@ const prepareManuscriptStructure = async (
     };
   };
 
+  const [reviewedPreprint, curatedPreprint] = gatheredPreprints;
+
   return {
     id,
     manuscript: {
       doi: '[ umbrella-doi ]',
       publishedDate: formatDate(preprintNotRevised.date),
     },
-    versions: await Promise.all(gatheredPreprints.map(async (preprint, i) => version(
-      id,
-      preprint.versionedDoi,
-      preprint.date,
-      (i + 1).toString(),
-      evaluationSummary,
-      evaluationSummaryDate,
-      evaluationSummaryParticipants,
-      peerReview,
-      peerReviewDate,
-      authorResponse,
-      authorResponseDate,
-    ))),
+    versions: await Promise.all([
+      version(
+        id,
+        reviewedPreprint.versionedDoi,
+        reviewedPreprint.date,
+        '1',
+        undefined,
+        undefined,
+        undefined,
+        peerReview,
+        peerReviewDate,
+      ),
+      version(
+        id,
+        curatedPreprint.versionedDoi,
+        curatedPreprint.date,
+        '2',
+        evaluationSummary,
+        evaluationSummaryDate,
+        evaluationSummaryParticipants,
+        peerReview,
+        peerReviewDate,
+        authorResponse,
+        authorResponseDate,
+      ),
+    ]),
   };
 };
 

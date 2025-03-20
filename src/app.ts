@@ -123,7 +123,7 @@ app.post('/manuscript-data-two-steps-all-evaluations', async (req, res) => {
       overridePreprints ? overridePreprints.split(/[^0-9]+/).filter((p) => p.length > 0) : [],
       [datePublished, dateRevised].filter((d) => d !== undefined).map((d) => new Date(d)),
       evaluationSummaryId,
-      ['anonymous'],
+      [],
       peerReviewId,
       authorResponseId,
     ).then((manuscript) => res.send(
