@@ -94,7 +94,6 @@ const prepareManuscriptStructure = async (
   const evaluation = (reviewType: string, date: Date, participants: string[], contentUrl: string) => ({
     reviewType,
     date: formatDate(date),
-    doi: `[ ${reviewType}-doi ]`,
     participants: participants.map((name) => ({
       name,
       role: 'curator',
@@ -152,11 +151,13 @@ const prepareManuscriptStructure = async (
   };
 
   const [reviewedPreprint, curatedPreprint] = gatheredPreprints;
+  const doiPrefix = '10.63204'; // Biophysics Colab HARDCODED
+  const umbrellaDoi = `${doiPrefix}/${id}`;
 
   return {
     id,
     manuscript: {
-      doi: '[ umbrella-doi ]',
+      doi: umbrellaDoi,
       publishedDate: formatDate(preprintNotRevised.date),
     },
     versions: await Promise.all([
@@ -170,6 +171,9 @@ const prepareManuscriptStructure = async (
         undefined,
         peerReview,
         peerReviewDate,
+        undefined,
+        undefined,
+        `${umbrellaDoi}.1`,
       ),
       version(
         id,
@@ -183,6 +187,7 @@ const prepareManuscriptStructure = async (
         peerReviewDate,
         authorResponse,
         authorResponseDate,
+        `${umbrellaDoi}.2`,
       ),
     ]),
   };
