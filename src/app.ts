@@ -22,7 +22,7 @@ app.get('/', (_, res) => {
   <ul>
     <li><a href="/import-docmap">Import DocMap</a></li>
     <li><a href="/manuscript-data">Import Manuscript Data</a></li>
-    <li><a href="/manuscript-data-two-steps-all-evaluations">Import Manuscript Data (2 steps)</a> - <em>all evaluations attached to all preprints</em></li>
+    <li><a href="/manuscript-data-two-steps-all-evaluations">Import Manuscript Data (2 steps)</a> - <em>Biophysics Colab only</em></li>
   </ul>
   `));
 });
