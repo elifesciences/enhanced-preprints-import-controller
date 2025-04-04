@@ -61,10 +61,10 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
 );
 
 export const generateManuscriptDataTwoStepsAllEvaluationsForm = () => htmlPage(
-  'Import Manuscript (2 steps) - all evaluations attached to all preprints',
+  'Import Manuscript (2 steps) - Biophysics Colab only',
   `<form action="/manuscript-data-two-steps-all-evaluations" method="post">
     <h2>Manuscript Data (2 steps)</h2>
-    <p><em>all evaluations attached to all preprints</em></p>
+    <p><em>Biophysics Colab only</em></p>
     <p>
       <label for="msid">MSID:</label>
       <input id="msid" name="msid" required/>
