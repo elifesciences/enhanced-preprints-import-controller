@@ -70,28 +70,28 @@ export const generateManuscriptDataTwoStepsAllEvaluationsForm = () => htmlPage(
       <input id="msid" name="msid" required/>
     </p>
     <p>
-      <label for="override-preprints">Override Biorxiv Preprint:</label>
+      <label for="override-preprints">Biorxiv Preprint versions (comma separated. e.g. "1,2"):</label>
       <input id="override-preprints" name="overridePreprints"/>
     </p>
     <p>
-      <label for="date-published">Published Date:</label>
+      <label for="date-published">Published Date for Reviewed version (YYYY-MM-DD):</label>
       <input id="date-published" name="datePublished" required/>
     </p>
     <p>
-      <label for="date-revised">Revised Date:</label>
-      <input id="date-revised" name="dateRevised"/>
+      <label for="date-revised">Published Date for Curated version (YYYY-MM-DD):</label>
+      <input id="date-revised" name="dateCurated" required/>
     </p>
     <p>
-      <label for="evaluation-summary-id">Evaluation Summary ID:</label>
-      <input id="evaluation-summary-id" name="evaluationSummaryId" required/>
+      <label for="peer-review-id">Report ID (peer-review):</label>
+      <input id="peer-review-id" name="peerReviewId" required/>
     </p>
     <p>
-      <label for="peer-review-id">Peer Review ID:</label>
-      <input id="peer-review-id" name="peerReviewId"/>
-    </p>
-    <p>
-      <label for="author-response-id">Author Response ID:</label>
+      <label for="author-response-id">Final Response ID (author-response):</label>
       <input id="author-response-id" name="authorResponseId"/>
+    </p>
+    <p>
+      <label for="evaluation-summary-id">Evaluation ID (evaluation-summary):</label>
+      <input id="evaluation-summary-id" name="evaluationSummaryId" required/>
     </p>
     <p>
       <button type="submit">Submit</button>
