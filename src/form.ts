@@ -74,12 +74,12 @@ export const generateManuscriptDataTwoStepsAllEvaluationsForm = () => htmlPage(
       <input id="override-preprints" name="overridePreprints"/>
     </p>
     <p>
-      <label for="date-published">Published Date for Reviewed version (YYYY-MM-DD):</label>
-      <input id="date-published" name="datePublished" required/>
+      <label for="date-reviewed">Published Date for Reviewed version (YYYY-MM-DD):</label>
+      <input id="date-reviewed" name="dateReviewed" required/>
     </p>
     <p>
-      <label for="date-revised">Published Date for Curated version (YYYY-MM-DD):</label>
-      <input id="date-revised" name="dateCurated" required/>
+      <label for="date-curated">Published Date for Curated version (YYYY-MM-DD):</label>
+      <input id="date-curated" name="dateCurated" required/>
     </p>
     <p>
       <label for="peer-review-id">Report ID (peer-review):</label>
