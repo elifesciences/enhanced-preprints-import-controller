@@ -95,8 +95,7 @@ export const scriptFormSchema = Joi.object<PrepareManuscriptData>({
   msid: Joi.string().trim().required(),
   overridePreprints: Joi.string().optional().empty(''),
   dateReviewed: Joi.string().trim().isoDate().required(),
-  dateCurated: Joi.string().trim().isoDate().optional()
-    .empty(''),
+  dateCurated: Joi.string().trim().isoDate().required(),
   evaluationSummaryId: Joi.string().trim().required(),
   peerReviewId: Joi.string().trim().optional().empty(''),
   authorResponseId: Joi.string().trim().optional().empty(''),

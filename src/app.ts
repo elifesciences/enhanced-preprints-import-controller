@@ -121,7 +121,7 @@ app.post('/manuscript-data-two-steps-all-evaluations', async (req, res) => {
     await prepareManuscript(
       msid,
       overridePreprints ? overridePreprints.split(/[^0-9]+/).filter((p) => p.length > 0) : [],
-      [dateReviewed, dateCurated].filter((d) => d !== undefined).map((d) => new Date(d)),
+      [dateReviewed, dateCurated].map((d) => new Date(d)),
       evaluationSummaryId,
       [],
       peerReviewId,

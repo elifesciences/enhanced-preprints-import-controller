@@ -197,7 +197,7 @@ export type PrepareManuscriptData = {
   msid: string,
   overridePreprints?: string,
   dateReviewed: Date,
-  dateCurated?: Date,
+  dateCurated: Date,
   evaluationSummaryId: string,
   peerReviewId?: string,
   authorResponseId?: string,
