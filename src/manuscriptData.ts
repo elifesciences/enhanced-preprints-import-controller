@@ -83,10 +83,10 @@ const prepareManuscriptStructure = async (
   evaluationSummary: string,
   evaluationSummaryDate: Date,
   evaluationSummaryParticipants: string[],
-  peerReview?: string,
-  peerReviewDate?: Date,
-  authorResponse?: string,
-  authorResponseDate?: Date,
+  peerReview: string,
+  peerReviewDate: Date,
+  authorResponse?: string | undefined,
+  authorResponseDate?: Date | undefined,
 ) => {
   const gatheredPreprints = gatherPreprints(preprintVersionedDois, dates, preprints);
   const [preprintNotRevised] = gatheredPreprints;
@@ -199,7 +199,7 @@ export type PrepareManuscriptData = {
   dateReviewed: Date,
   dateCurated: Date,
   evaluationSummaryId: string,
-  peerReviewId?: string,
+  peerReviewId: string,
   authorResponseId?: string,
   doi?: string,
 };
@@ -210,7 +210,7 @@ export const prepareManuscript = async (
   dates: Date[],
   evaluationSummary: string,
   evaluationSummaryParticipants: string[],
-  peerReview?: string,
+  peerReview: string,
   authorResponse?: string,
 ) => {
   const hypothesisDefault = {
@@ -250,10 +250,21 @@ export const prepareManuscript = async (
   ]
     .filter((e) => e !== null);
 
-  if (evaluationSummary === null || evaluationSummaryDate === null || errors.length > 0) {
-    if (errors.length === 0) {
-      errors.push('Evaluation summary not found!');
-    }
+  if (evaluationSummary === null || evaluationSummaryDate === null) {
+    errors.push('Evaluation summary not found!');
+  }
+
+  if (peerReview === null || peerReviewDate === null) {
+    errors.push('Peer review not found!');
+  }
+
+  if (
+    evaluationSummary === null
+    || evaluationSummaryDate === null
+    || peerReview === null
+    || peerReviewDate === null
+    || errors.length > 0
+  ) {
     throw new Error(errors.join(', '));
   }
 
@@ -269,8 +280,8 @@ export const prepareManuscript = async (
     evaluationSummary,
     evaluationSummaryDate,
     evaluationSummaryParticipants,
-    peerReviewDate ? peerReview : undefined,
-    peerReviewDate ?? undefined,
+    peerReview,
+    peerReviewDate,
     authorResponseDate ? authorResponse : undefined,
     authorResponseDate ?? undefined,
   );
