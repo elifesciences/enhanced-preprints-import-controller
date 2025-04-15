@@ -119,18 +119,6 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
         const initialJson = JSON.parse(textarea.value);
         const formattedJson = JSON.stringify(initialJson, null, 2);
         editor.setValue(formattedJson);
-        
-        // Set up initial fold state - collapse deep structures
-        setTimeout(() => {
-          for (let i = 0; i < editor.lineCount(); i++) {
-            const line = editor.getLine(i);
-            // Find lines with objects/arrays that continue beyond current level
-            if ((line.includes('{') || line.includes('[')) && 
-                line.trim().length <= 4) { // Only fold initial levels
-              editor.foldCode(CodeMirror.Pos(i, 0));
-            }
-          }
-        }, 100);
       } catch (e) {
         // If not valid JSON, keep as is
         console.log('Initial JSON parsing failed:', e);
