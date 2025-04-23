@@ -2,11 +2,17 @@ import express, { Express } from 'express';
 import BodyParser from 'body-parser';
 import { Client, Connection } from '@temporalio/client';
 import { randomBytes } from 'node:crypto';
-import { importDocmapFormSchema, manuscriptDataSchema, scriptFormSchema } from './form-validation';
+import {
+  importDocmapFormSchema,
+  manuscriptDataHelperFormSchema,
+  manuscriptDataSchema,
+  scriptFormSchema,
+} from './form-validation';
 import { config } from './config';
 import {
   generateImportDocmapForm,
   generateManuscriptDataForm,
+  generateManuscriptDataHelperForm,
   generateManuscriptDataTwoStepsAllEvaluationsForm,
   htmlPage,
 } from './form';
@@ -93,6 +99,46 @@ app.post('/import-docmap', async (req, res) => {
 
     // eslint-disable-next-line no-console
     console.error('validation failed for import docmap form', { error: JSON.stringify(validationResult.error, null, 4), warning: validationResult.warning });
+  }
+});
+
+app.get('/manuscript-data-helper-form', (req, res) => {
+  const { versions: versionsRaw } = req.query as { versions?: string };
+  if (versionsRaw !== undefined) {
+    const versions = parseInt(versionsRaw, 10);
+    res.send(generateManuscriptDataHelperForm(Number.isNaN(versions) ? 1 : versions));
+  } else {
+    res.send(htmlPage(
+      'Import Manuscript Data - Biophysics Colab only',
+      `<h2>Manuscript Data</h2>
+      <p><em>Biophysics Colab only (Step 1 of 3)</em></p>
+      <form action="/manuscript-data-helper-form" method="get">
+        <p>
+          <label>Versions: <input type="number" name="versions" value="1" placeholder="1" min="1" step="1" required/></label>
+        </p>
+        <p>
+          <button type="submit">Submit</button>
+        </p>
+      </form>`,
+    ));
+  }
+});
+
+app.post('/manuscript-data-helper-form', async (req, res) => {
+  const validationResult = manuscriptDataHelperFormSchema.validate(req.body, { abortEarly: false, allowUnknown: true });
+
+  if (validationResult.error === undefined) {
+    res.status(200).send({
+      result: validationResult.value,
+      message: 'success',
+    });
+  } else {
+    res.status(400).send(htmlPage('Validation Error', JSON.stringify({
+      result: false,
+      message: 'validation failed',
+      error: validationResult.error,
+      warning: validationResult.warning,
+    }, undefined, 2)));
   }
 });
 
