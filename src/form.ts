@@ -295,6 +295,47 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
   </style>`,
 );
 
+export const generateManuscriptDataHelperForm = (versions: number) => htmlPage(
+  'Import Manuscript Data - Biophysics Colab only',
+  `<h2>Manuscript Data</h2>
+  <p><em>Biophysics Colab only (Step 2 of 3)</em></p>
+  <form action="/manuscript-data-helper-form" method="post">
+    <p>
+      <label>MSID: <input type="text" name="msid" required/></label>
+    </p>
+    ${Array.from({ length: versions }, (_, i) => i).map((version) => (`<fieldset>
+      <legend>Version ${version + 1}</legend>
+      <p>
+        <label>Biorxiv Preprint version: <input type="text" name="version[${version}][biorxiv]" required/></label>
+      </p>
+      <p>
+        <label>Reviewed Date (YYYY-MM-DD): <input type="text" name="version[${version}][reviewed]" required/></label>
+      </p>
+      <p>
+        <label>Report ID: <input type="text" name="version[${version}][report]"/></label>
+      </p>
+      <p>
+        <label>Response ID: <input type="text" name="version[${version}][response]"/></label>
+      </p>
+      <p>
+        <label>Evaluation ID: <input type="text" name="version[${version}][evaluation]"/></label>
+      </p>
+    </fieldset>`)).join('')}
+    <p>
+      <label><input type="checkbox" name="vor" value="true"/> VOR</label>
+    </p>
+    <p>
+      <button type="submit">Submit</button>
+    </p>
+  </form>`,
+  `<style>
+    fieldset {
+      border: 0.1em solid;
+      padding: 0.5em;
+    }
+  </style>`,
+);
+
 export const generateManuscriptDataTwoStepsAllEvaluationsForm = () => htmlPage(
   'Import Manuscript (2 steps) - Biophysics Colab only',
   `<form action="/manuscript-data-two-steps-all-evaluations" method="post">

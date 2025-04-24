@@ -204,6 +204,18 @@ export type PrepareManuscriptData = {
   doi?: string,
 };
 
+export type PrepareManuscriptDataHelper = {
+  msid: string;
+  version: {
+    biorxiv: number,
+    reviewed: Date,
+    report?: string,
+    response?: string,
+    evaluation?: string,
+  }[];
+  vor: boolean;
+};
+
 export const prepareManuscript = async (
   id: string,
   preprints: string[],
