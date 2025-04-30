@@ -322,9 +322,6 @@ export const generateManuscriptDataHelperForm = (versions: number) => htmlPage(
       </p>
     </fieldset>`)).join('')}
     <p>
-      <label><input type="checkbox" name="vor" value="true"/> VOR</label>
-    </p>
-    <p>
       <button type="submit">Submit</button>
     </p>
   </form>`,
@@ -332,6 +329,10 @@ export const generateManuscriptDataHelperForm = (versions: number) => htmlPage(
     fieldset {
       border: 0.1em solid;
       padding: 0.5em;
+    }
+    
+    button {
+      margin-top: 1em;
     }
   </style>`,
 );

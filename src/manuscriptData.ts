@@ -213,7 +213,6 @@ export type PrepareManuscriptDataHelper = {
     response?: string,
     evaluation?: string,
   }[];
-  vor: boolean;
 };
 
 export const prepareManuscript = async (
