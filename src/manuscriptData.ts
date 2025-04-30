@@ -206,7 +206,7 @@ export type PrepareManuscriptData = {
 
 export type PrepareManuscriptDataHelper = {
   msid: string;
-  version: {
+  versions: {
     biorxiv: number,
     reviewed: Date,
     report?: string,

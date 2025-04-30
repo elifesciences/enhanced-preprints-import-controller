@@ -128,6 +128,10 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
   const validationResult = manuscriptDataHelperFormSchema.validate(req.body, { abortEarly: false, allowUnknown: true });
 
   if (validationResult.error === undefined) {
+    const {
+      msid,
+      
+    } = validationResult.value;
     res.status(200).send({
       result: validationResult.value,
       message: 'success',

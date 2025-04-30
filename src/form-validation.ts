@@ -104,7 +104,7 @@ export const scriptFormSchema = Joi.object<PrepareManuscriptData>({
 
 export const manuscriptDataHelperFormSchema = Joi.object<PrepareManuscriptDataHelper>({
   msid: Joi.string().trim().required(),
-  version: Joi.array().items(Joi.object({
+  versions: Joi.array().items(Joi.object({
     biorxiv: Joi.number().min(1).integer().required(),
     reviewed: Joi.string().trim().isoDate().required(),
     report: Joi.string().trim().optional().empty(''),

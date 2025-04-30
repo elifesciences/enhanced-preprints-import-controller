@@ -306,19 +306,19 @@ export const generateManuscriptDataHelperForm = (versions: number) => htmlPage(
     ${Array.from({ length: versions }, (_, i) => i).map((version) => (`<fieldset>
       <legend>Version ${version + 1}</legend>
       <p>
-        <label>Biorxiv Preprint version: <input type="text" name="version[${version}][biorxiv]" required/></label>
+        <label>Biorxiv Preprint version: <input type="text" name="versions[${version}][biorxiv]" required/></label>
       </p>
       <p>
-        <label>Reviewed Date (YYYY-MM-DD): <input type="text" name="version[${version}][reviewed]" required/></label>
+        <label>Reviewed Date (YYYY-MM-DD): <input type="text" name="versions[${version}][reviewed]" required/></label>
       </p>
       <p>
-        <label>Report ID: <input type="text" name="version[${version}][report]"/></label>
+        <label>Report ID: <input type="text" name="versions[${version}][report]"/></label>
       </p>
       <p>
-        <label>Response ID: <input type="text" name="version[${version}][response]"/></label>
+        <label>Response ID: <input type="text" name="versions[${version}][response]"/></label>
       </p>
       <p>
-        <label>Evaluation ID: <input type="text" name="version[${version}][evaluation]"/></label>
+        <label>Evaluation ID: <input type="text" name="versions[${version}][evaluation]"/></label>
       </p>
     </fieldset>`)).join('')}
     <p>
