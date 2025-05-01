@@ -32,166 +32,8 @@ const hypothesis = async (id: string) => axios.get<{
     throw error;
   });
 
-const gatherPreprints = (preprints: string[], dates: Date[], specificPreprints: string[]) => {
-  // Use a Set to remove duplicates
-  const uniquePreprints = Array.from(new Set(preprints));
-  const uniqueSpecificPreprints = Array.from(new Set(specificPreprints));
-
-  // Sort the preprints based on the numeric part
-  uniquePreprints.sort((a, b) => {
-    const matchA = a.match(/.+v([0-9]+)$/);
-    const matchB = b.match(/.+v([0-9]+)$/);
-
-    if (!matchA || !matchB) {
-      throw new Error('Invalid preprint format');
-    }
-
-    const versionA = parseInt(matchA[1], 10);
-    const versionB = parseInt(matchB[1], 10);
-
-    return versionA - versionB;
-  });
-
-  uniqueSpecificPreprints.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
-
-  if (uniquePreprints.length < uniqueSpecificPreprints.length) {
-    const [doi] = uniquePreprints[uniquePreprints.length - 1].split('v');
-    for (let i = uniquePreprints.length; i < uniqueSpecificPreprints.length; i += 1) {
-      uniquePreprints.push(`${doi}v${uniqueSpecificPreprints[i]}`);
-    }
-  }
-
-  return uniquePreprints.map((versionedDoi, i) => {
-    const [doi, versionIdentifier] = versionedDoi.split('v');
-    return {
-      versionedDoi: uniqueSpecificPreprints.length > i ? `${doi}v${uniqueSpecificPreprints[i]}` : versionedDoi,
-      doi,
-      versionIdentifier: uniqueSpecificPreprints.length > i ? uniqueSpecificPreprints[i] : versionIdentifier,
-      date: (dates.length > i) ? dates[i] : dates[dates.length - 1],
-    };
-  });
-};
-
 const formatDate = (date: Date) => date.toISOString();
 const evaluationUrl = (id: string) => `https://sciety.org/evaluations/hypothesis:${id}/content`;
-
-const prepareManuscriptStructure = async (
-  id: string,
-  preprintVersionedDois: string[],
-  preprints: string[],
-  dates: Date[],
-  evaluationSummary: string,
-  evaluationSummaryDate: Date,
-  evaluationSummaryParticipants: string[],
-  peerReview: string,
-  peerReviewDate: Date,
-  authorResponse?: string | undefined,
-  authorResponseDate?: Date | undefined,
-) => {
-  const gatheredPreprints = gatherPreprints(preprintVersionedDois, dates, preprints);
-  const [preprintNotRevised] = gatheredPreprints;
-
-  const evaluation = (reviewType: string, date: Date, participants: string[], contentUrl: string) => ({
-    reviewType,
-    date: formatDate(date),
-    participants: participants.map((name) => ({
-      name,
-      role: 'curator',
-    })),
-    contentUrls: [
-      contentUrl,
-    ],
-  });
-
-  const version = async (
-    versionId: string,
-    preprintVersionedDoi: string,
-    date: Date,
-    versionIdentifier: string,
-    versionEvaluationSummary?: string,
-    versionEvaluationSummaryDate?: Date,
-    versionEvaluationSummaryParticipants?: string[],
-    versionPeerReview?: string,
-    versionPeerReviewDate?: Date,
-    versionAuthorResponse?: string,
-    versionAuthorResponseDate?: Date,
-    versionDoi?: string,
-  ) => {
-    const [preprintDoi, preprintVersionIdentifier] = preprintVersionedDoi.split('v');
-    const results = await bioxriv(preprintVersionedDoi);
-    const content = results.map((result) => result.content);
-
-    return {
-      id: versionId,
-      doi: versionDoi || '[ version-doi ]',
-      publishedDate: formatDate(date),
-      versionIdentifier,
-      preprint: {
-        id: preprintDoi,
-        doi: preprintDoi,
-        ...(results.length > 0 ? { publishedDate: formatDate(results[0].date) } : {}),
-        versionIdentifier: preprintVersionIdentifier,
-        content,
-        url: `https://www.biorxiv.org/content/${preprintVersionedDoi}`,
-      },
-      license: 'http://creativecommons.org/licenses/by/4.0/',
-      peerReview: {
-        reviews: (versionPeerReview && versionPeerReviewDate) ? [evaluation('review-article', versionPeerReviewDate, [], evaluationUrl(versionPeerReview))] : [],
-        ...(
-          versionEvaluationSummary && versionEvaluationSummaryDate && versionEvaluationSummaryParticipants
-            ? { evaluationSummary: evaluation('evaluation-summary', versionEvaluationSummaryDate, versionEvaluationSummaryParticipants, evaluationUrl(versionEvaluationSummary)) }
-            : {}
-        ),
-        ...(versionAuthorResponse && versionAuthorResponseDate ? { authorResponse: evaluation('author-response', versionAuthorResponseDate, [], evaluationUrl(versionAuthorResponse)) } : {}),
-      },
-      ...(versionPeerReview && versionPeerReviewDate ? { reviewedDate: formatDate(versionPeerReviewDate) } : {}),
-      content,
-      ...(versionAuthorResponse && versionAuthorResponseDate ? { authorResponseDate: formatDate(versionAuthorResponseDate) } : {}),
-    };
-  };
-
-  const [reviewedPreprint, curatedPreprint] = gatheredPreprints;
-  const doiPrefix = '10.63204'; // Biophysics Colab HARDCODED
-  const umbrellaDoi = `${doiPrefix}/${id}`;
-
-  return {
-    id,
-    manuscript: {
-      doi: umbrellaDoi,
-      publishedDate: formatDate(preprintNotRevised.date),
-    },
-    versions: await Promise.all([
-      version(
-        id,
-        reviewedPreprint.versionedDoi,
-        reviewedPreprint.date,
-        '1',
-        undefined,
-        undefined,
-        undefined,
-        peerReview,
-        peerReviewDate,
-        undefined,
-        undefined,
-        `${umbrellaDoi}.1`,
-      ),
-      version(
-        id,
-        curatedPreprint.versionedDoi,
-        curatedPreprint.date,
-        '2',
-        evaluationSummary,
-        evaluationSummaryDate,
-        evaluationSummaryParticipants,
-        peerReview,
-        peerReviewDate,
-        authorResponse,
-        authorResponseDate,
-        `${umbrellaDoi}.2`,
-      ),
-    ]),
-  };
-};
 
 export type PrepareManuscriptData = {
   msid: string,
@@ -215,85 +57,108 @@ export type PrepareManuscriptDataHelper = {
   }[];
 };
 
-export const prepareManuscript = async (
-  id: string,
-  preprints: string[],
-  dates: Date[],
-  evaluationSummary: string,
-  evaluationSummaryParticipants: string[],
-  peerReview: string,
-  authorResponse?: string,
-) => {
+export const prepareManuscript = async ({
+  msid,
+  versions,
+}: PrepareManuscriptDataHelper, umbrellaDoi?: string) => {
   const hypothesisDefault = {
     preprint: null,
     date: null,
     error: null,
   };
 
-  const [
-    {
-      preprint: evaluationSummaryPreprint,
-      date: evaluationSummaryDate,
-      error: evaluationSummaryError,
-    },
-    {
-      preprint: peerReviewPreprint,
-      date: peerReviewDate,
-      error: peerReviewError,
-    },
-    {
-      preprint: authorResponsePreprint,
-      date: authorResponseDate,
-      error: authorResponseError,
-    },
-  ] = await Promise.all([
-    hypothesis(evaluationSummary),
-    ...[
-      peerReview,
-      authorResponse,
-    ].map((evaluationId) => (evaluationId ? hypothesis(evaluationId) : hypothesisDefault)),
-  ]);
+  const versionsDecorated = await Promise.all(versions.map(async ({
+    biorxiv: biorxivVersion, reviewed, evaluation, report, response,
+  }, index) => {
+    const [
+      {
+        preprint: evaluationSummaryPreprint,
+        date: evaluationSummaryDate,
+        error: evaluationSummaryError,
+      },
+      {
+        preprint: peerReviewPreprint,
+        date: peerReviewDate,
+        error: peerReviewError,
+      },
+      {
+        preprint: authorResponsePreprint,
+        date: authorResponseDate,
+        error: authorResponseError,
+      },
+    ] = await Promise.all([
+      evaluation,
+      report,
+      response,
+    ].map(async (evaluationId) => (evaluationId ? hypothesis(evaluationId) : hypothesisDefault)));
 
-  const errors = [
-    evaluationSummaryError,
-    peerReviewError,
-    authorResponseError,
-  ]
-    .filter((e) => e !== null);
+    const errors = [
+      evaluationSummaryError,
+      peerReviewError,
+      authorResponseError,
+    ].filter((e) => e !== null);
 
-  if (evaluationSummary === null || evaluationSummaryDate === null) {
-    errors.push('Evaluation summary not found!');
-  }
-
-  if (peerReview === null || peerReviewDate === null) {
-    errors.push('Peer review not found!');
-  }
-
-  if (
-    evaluationSummary === null
-    || evaluationSummaryDate === null
-    || peerReview === null
-    || peerReviewDate === null
-    || errors.length > 0
-  ) {
-    throw new Error(errors.join(', '));
-  }
-
-  return prepareManuscriptStructure(
-    id,
-    [
+    const preprints = [
       evaluationSummaryPreprint,
       peerReviewPreprint,
       authorResponsePreprint,
-    ].filter((preprint) => preprint !== null),
-    preprints,
-    dates,
-    evaluationSummary,
-    evaluationSummaryDate,
-    evaluationSummaryParticipants,
-    peerReview,
-    peerReviewDate,
-    authorResponseDate ? authorResponse : undefined,
-    authorResponseDate ?? undefined,
-  );
+    ].filter((e) => e !== null);
+
+    if (preprints.length === 0) {
+      errors.push('No preprint found from evaluations');
+    }
+
+    const [exampleDoi] = preprints;
+    const [doi] = exampleDoi.split('v');
+    const versionedDoi = `${doi}v${biorxivVersion}`;
+    const [biorxivDetails] = await bioxriv(versionedDoi);
+
+    if (biorxivDetails === undefined) {
+      errors.push(`Could not retrieve biorxiv response for ${versionedDoi}`);
+    }
+
+    const createEvaluation = (reviewType: string, date: Date, participants: string[], contentUrl: string) => ({
+      reviewType,
+      date: formatDate(date),
+      participants: participants.map((name) => ({
+        name,
+        role: 'curator',
+      })),
+      contentUrls: [
+        contentUrl,
+      ],
+    });
+
+    const versionIdentifier = (index + 1).toString();
+
+    return {
+      id: msid,
+      publishedDate: reviewed,
+      ...(umbrellaDoi ? { doi: `${umbrellaDoi}.${versionIdentifier}`, versionIdentifier } : {}),
+      preprint: {
+        id: doi,
+        doi,
+        publishedDate: formatDate(biorxivDetails.date),
+        versionIdentifier: biorxivVersion.toString(),
+        content: [biorxivDetails.content],
+        url: `https://www.biorxiv.org/content/${versionedDoi}`,
+      },
+      license: 'http://creativecommons.org/licenses/by/4.0/',
+      content: [biorxivDetails.content],
+      peerReview: {
+        reviews: (report && peerReviewDate) ? [createEvaluation('review-article', peerReviewDate, [], evaluationUrl(report))] : [],
+        ...(response && authorResponseDate ? {
+          authorResponse: createEvaluation('author-response', authorResponseDate, [], evaluationUrl(response)),
+        } : {}),
+        ...(evaluation && evaluationSummaryDate ? {
+          evaluationSummary: createEvaluation('evaluation-summary', evaluationSummaryDate, [], evaluationUrl(evaluation)),
+        } : {}),
+      },
+      ...(report && peerReviewDate ? { reviewedDate: formatDate(peerReviewDate) } : {}),
+      ...(response && authorResponseDate ? { authorResponseDate: formatDate(authorResponseDate) } : {}),
+      ...(errors.length > 0 ? { errors } : {}),
+    };
+  }));
+
+  return versionsDecorated;
 };

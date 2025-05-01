@@ -6,14 +6,12 @@ import {
   importDocmapFormSchema,
   manuscriptDataHelperFormSchema,
   manuscriptDataSchema,
-  scriptFormSchema,
 } from './form-validation';
 import { config } from './config';
 import {
   generateImportDocmapForm,
   generateManuscriptDataForm,
   generateManuscriptDataHelperForm,
-  generateManuscriptDataTwoStepsAllEvaluationsForm,
   htmlPage,
 } from './form';
 import { prepareManuscript } from './manuscriptData';
@@ -28,7 +26,7 @@ app.get('/', (_, res) => {
   <ul>
     <li><a href="/import-docmap">Import DocMap</a></li>
     <li><a href="/manuscript-data">Import Manuscript Data</a></li>
-    <li><a href="/manuscript-data-two-steps-all-evaluations">Import Manuscript Data (2 steps)</a> - <em>Biophysics Colab only</em></li>
+    <li><a href="/manuscript-data-helper-form">Import Manuscript Data (3 steps)</a> - <em>Biophysics Colab only</em></li>
   </ul>
   `));
 });
@@ -128,14 +126,32 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
   const validationResult = manuscriptDataHelperFormSchema.validate(req.body, { abortEarly: false, allowUnknown: true });
 
   if (validationResult.error === undefined) {
-    const {
-      msid,
-      
-    } = validationResult.value;
-    res.status(200).send({
-      result: validationResult.value,
-      message: 'success',
-    });
+    const { msid } = validationResult.value;
+    const umbrellaDoi = `10.63204/${msid}`;
+    const versions = await prepareManuscript(validationResult.value, umbrellaDoi);
+
+    const allErrors = versions.reduce((all: string[], { errors }) => ([...all, ...errors ?? []]), []);
+
+    if (allErrors.length > 0) {
+      res.status(422).send(htmlPage('Unprocessable Content', JSON.stringify({
+        result: false,
+        message: 'unprocessable content',
+        error: allErrors.join(', '),
+        warning: undefined,
+      }, undefined, 2)));
+    } else {
+      const [{ publishedDate }] = versions;
+      res.send(
+        generateManuscriptDataForm(JSON.stringify({
+          id: msid,
+          manuscript: {
+            doi: umbrellaDoi,
+            publishedDate,
+          },
+          versions,
+        }, undefined, 2)),
+      );
+    }
   } else {
     res.status(400).send(htmlPage('Validation Error', JSON.stringify({
       result: false,
@@ -144,58 +160,10 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
       warning: validationResult.warning,
     }, undefined, 2)));
   }
-});
-
-app.get('/manuscript-data-two-steps-all-evaluations', (_, res) => {
-  res.send(generateManuscriptDataTwoStepsAllEvaluationsForm());
 });
 
 app.get('/manuscript-data', (_, res) => {
   res.send(generateManuscriptDataForm());
-});
-
-app.post('/manuscript-data-two-steps-all-evaluations', async (req, res) => {
-  const validationResult = scriptFormSchema.validate(req.body, { abortEarly: false, allowUnknown: true });
-
-  if (validationResult.error === undefined) {
-    const {
-      msid,
-      overridePreprints,
-      dateReviewed,
-      dateCurated,
-      evaluationSummaryId,
-      peerReviewId,
-      authorResponseId,
-    } = validationResult.value;
-
-    await prepareManuscript(
-      msid,
-      overridePreprints ? overridePreprints.split(/[^0-9]+/).filter((p) => p.length > 0) : [],
-      [dateReviewed, dateCurated].map((d) => new Date(d)),
-      evaluationSummaryId,
-      [],
-      peerReviewId,
-      authorResponseId,
-    ).then((manuscript) => res.send(
-      generateManuscriptDataForm(JSON.stringify(manuscript, undefined, 2)),
-    )).catch((err) => {
-      const message = err.toString();
-      res.status(400).send(htmlPage('Bad Request', `Bad Request: ${message}`));
-
-      // eslint-disable-next-line no-console
-      console.error(`script error: ${message}`);
-    });
-  } else {
-    res.status(400).send(htmlPage('Validation Error', JSON.stringify({
-      result: false,
-      message: 'validation failed',
-      error: validationResult.error,
-      warning: validationResult.warning,
-    }, undefined, 2)));
-
-    // eslint-disable-next-line no-console
-    console.error('validation failed for script form', { error: JSON.stringify(validationResult.error, null, 4), warning: validationResult.warning });
-  }
 });
 
 app.post('/manuscript-data', async (req, res) => {
