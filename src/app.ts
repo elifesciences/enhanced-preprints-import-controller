@@ -169,6 +169,7 @@ app.get('/manuscript-data', (_, res) => {
 app.post('/manuscript-data', async (req, res) => {
   const input = JSON.parse(req.body.manuscript.data);
   const namespace = req.body.temporalNamespace;
+  const purge = !!req.body.purge;
   if (!namespace || namespace.length === 0) {
     res.status(400).send({
       result: false,
@@ -195,18 +196,24 @@ app.post('/manuscript-data', async (req, res) => {
       connection,
       namespace,
     });
+    const validationResultValue = validationResult.value;
     // send to temporal
     await client.workflow.start('importManuscriptData', {
       taskQueue: config.temporalTaskQueue,
       workflowId: [
         'import',
-        validationResult.value.id,
+        validationResultValue.id,
         (new Date()).toISOString().replace(/[-:.TZ]/g, '').slice(0, 15),
         randomBytes(4).toString('hex'),
       ].join('-'),
       args: [
         {
-          data: validationResult.value,
+          data: validationResultValue,
+          ...(purge ? {
+            workflowArgs: {
+              purgeBeforeImport: true,
+            },
+          } : {}),
         },
       ],
     })

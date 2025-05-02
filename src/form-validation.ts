@@ -1,6 +1,6 @@
 import { ManuscriptData } from '@elifesciences/docmap-ts';
 import Joi from 'joi';
-import { PrepareManuscriptData, PrepareManuscriptDataHelper } from './manuscriptData';
+import { PrepareManuscriptDataHelper } from './manuscriptData';
 
 const relatedContentItemSchema = Joi.object({
   type: Joi.string().required(),
@@ -85,21 +85,11 @@ export const versionedReviewedPreprintSchema = Joi.object({
   content: Joi.array().items(Joi.string()).optional(),
 });
 
-export const manuscriptDataSchema = Joi.object<ManuscriptData>({
+export const manuscriptDataSchema = Joi.object<ManuscriptData & { purge: boolean }>({
   id: Joi.string().required(),
   manuscript: manuscriptSchema.optional(),
   versions: Joi.array().items(versionedReviewedPreprintSchema, versionedPreprintSchema).min(1).required(),
-});
-
-export const scriptFormSchema = Joi.object<PrepareManuscriptData>({
-  msid: Joi.string().trim().required(),
-  overridePreprints: Joi.string().optional().empty(''),
-  dateReviewed: Joi.string().trim().isoDate().required(),
-  dateCurated: Joi.string().trim().isoDate().required(),
-  evaluationSummaryId: Joi.string().trim().required(),
-  peerReviewId: Joi.string().trim().required(),
-  authorResponseId: Joi.string().trim().optional().empty(''),
-  doi: Joi.string().trim().optional().empty(''),
+  purge: Joi.boolean().invalid(false),
 });
 
 export const manuscriptDataHelperFormSchema = Joi.object<PrepareManuscriptDataHelper>({

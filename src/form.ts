@@ -58,6 +58,9 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
       </select>
     </p>
     <p>
+      <label><input type="checkbox" name="purge" value="true"/> Delete before import</label>
+    </p>
+    <p>
       <button type="submit" id="submit-button">Submit</button>
     </p>
   </form>

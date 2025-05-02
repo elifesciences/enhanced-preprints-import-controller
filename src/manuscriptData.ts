@@ -47,14 +47,15 @@ export type PrepareManuscriptData = {
 };
 
 export type PrepareManuscriptDataHelper = {
-  msid: string;
+  msid: string,
   versions: {
     biorxiv: number,
     reviewed: Date,
     report?: string,
     response?: string,
     evaluation?: string,
-  }[];
+  }[],
+  purge?: string,
 };
 
 export const prepareManuscript = async ({
