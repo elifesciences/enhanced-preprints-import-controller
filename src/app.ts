@@ -127,8 +127,8 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
 
   if (validationResult.error === undefined) {
     const { msid } = validationResult.value;
-    const umbrellaDoi = `10.63204/${msid}`;
-    const versions = await prepareManuscript(validationResult.value, umbrellaDoi);
+    const doiPrefix = `10.63204/${msid}`;
+    const versions = await prepareManuscript(validationResult.value, doiPrefix);
 
     const allErrors = versions.reduce((all: string[], { errors }) => ([...all, ...errors ?? []]), []);
 
@@ -145,7 +145,6 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
         generateManuscriptDataForm(JSON.stringify({
           id: msid,
           manuscript: {
-            doi: umbrellaDoi,
             publishedDate,
           },
           versions,

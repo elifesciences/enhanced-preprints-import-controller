@@ -61,7 +61,7 @@ export type PrepareManuscriptDataHelper = {
 export const prepareManuscript = async ({
   msid,
   versions,
-}: PrepareManuscriptDataHelper, umbrellaDoi?: string) => {
+}: PrepareManuscriptDataHelper, doiPrefix?: string) => {
   const hypothesisDefault = {
     preprint: null,
     date: null,
@@ -135,7 +135,7 @@ export const prepareManuscript = async ({
     return {
       id: msid,
       publishedDate: reviewed,
-      ...(umbrellaDoi ? { doi: `${umbrellaDoi}.${versionIdentifier}`, versionIdentifier } : {}),
+      ...(doiPrefix ? { doi: `${doiPrefix}.${versionIdentifier}`, versionIdentifier } : {}),
       preprint: {
         id: doi,
         doi,
