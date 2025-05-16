@@ -50,7 +50,7 @@ export type PrepareManuscriptDataHelper = {
   msid: string,
   versions: {
     biorxiv: number,
-    reviewed: Date,
+    reviewed: string,
     report?: string,
     response?: string,
     evaluation?: string,
@@ -134,7 +134,8 @@ export const prepareManuscript = async ({
 
     return {
       id: msid,
-      publishedDate: reviewed,
+      // Progress the reviewed date by index seconds to avoid exact dates for multiple versions
+      publishedDate: formatDate(new Date(new Date(reviewed).getTime() + (index * 1000))),
       ...(doiPrefix ? { doi: `${doiPrefix}.${versionIdentifier}`, versionIdentifier } : {}),
       preprint: {
         id: doi,
