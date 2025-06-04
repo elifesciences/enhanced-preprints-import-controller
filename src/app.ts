@@ -142,12 +142,11 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
     } else {
       const [{ publishedDate }] = versions;
       const volume = Math.max(1, new Date(publishedDate).getFullYear() - 2025 + 1).toString();
-      const eLocationId = `RP${msid}`;
       res.send(
         generateManuscriptDataForm(JSON.stringify({
           id: msid,
           manuscript: {
-            eLocationId,
+            eLocationId: msid,
             volume,
             publishedDate,
           },
