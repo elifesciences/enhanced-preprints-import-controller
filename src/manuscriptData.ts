@@ -54,6 +54,7 @@ export type PrepareManuscriptDataHelper = {
     report?: string,
     response?: string,
     evaluation?: string,
+    vor?: boolean,
   }[],
   purge?: string,
 };
@@ -69,7 +70,7 @@ export const prepareManuscript = async ({
   };
 
   const versionsDecorated = await Promise.all(versions.map(async ({
-    biorxiv: biorxivVersion, reviewed, evaluation, report, response,
+    biorxiv: biorxivVersion, reviewed, evaluation, report, response, vor,
   }, index) => {
     const [
       {
@@ -137,14 +138,16 @@ export const prepareManuscript = async ({
       // Progress the reviewed date by index seconds to avoid exact dates for multiple versions
       publishedDate: formatDate(new Date(new Date(reviewed).getTime() + (index * 1000))),
       ...(doiPrefix ? { doi: `${doiPrefix}.${versionIdentifier}`, versionIdentifier } : {}),
-      preprint: {
-        id: doi,
-        doi,
-        publishedDate: formatDate(biorxivDetails.date),
-        versionIdentifier: biorxivVersion.toString(),
-        content: [biorxivDetails.content],
-        url: `https://www.biorxiv.org/content/${versionedDoi}`,
-      },
+      ...(!vor ? {
+        preprint: {
+          id: doi,
+          doi,
+          publishedDate: formatDate(biorxivDetails.date),
+          versionIdentifier: biorxivVersion.toString(),
+          content: [biorxivDetails.content],
+          url: `https://www.biorxiv.org/content/${versionedDoi}`,
+        },
+      } : {}),
       license: 'http://creativecommons.org/licenses/by/4.0/',
       content: [biorxivDetails.content],
       peerReview: {

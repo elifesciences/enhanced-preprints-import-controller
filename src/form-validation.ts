@@ -100,6 +100,7 @@ export const manuscriptDataHelperFormSchema = Joi.object<PrepareManuscriptDataHe
     report: Joi.string().trim().optional().empty(''),
     response: Joi.string().trim().optional().empty(''),
     evaluation: Joi.string().trim().optional().empty(''),
+    vor: Joi.boolean().optional(),
   }).or('report', 'response', 'evaluation')).min(1).required(),
 });
 

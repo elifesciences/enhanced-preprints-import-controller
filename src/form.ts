@@ -323,6 +323,9 @@ export const generateManuscriptDataHelperForm = (versions: number) => htmlPage(
       <p>
         <label>Evaluation ID: <input type="text" name="versions[${version}][evaluation]"/></label>
       </p>
+      <p>
+        <label><input type="checkbox" name="versions[${version}][vor]" value="true"/> VOR</label>
+      </p>
     </fieldset>`)).join('')}
     <p>
       <button type="submit">Submit</button>
