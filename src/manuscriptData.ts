@@ -50,7 +50,7 @@ export type PrepareManuscriptDataHelper = {
   msid: string,
   versions: {
     biorxiv: number,
-    reviewed: string,
+    reviewed?: string,
     report?: string,
     response?: string,
     evaluation?: string,
@@ -69,7 +69,7 @@ export const prepareManuscript = async ({
     error: null,
   };
 
-  const versionsDecorated = await Promise.all(versions.map(async ({
+  return Promise.all(versions.map(async ({
     biorxiv: biorxivVersion, reviewed, evaluation, report, response, vor,
   }, index) => {
     const [
@@ -136,7 +136,7 @@ export const prepareManuscript = async ({
     return {
       id: msid,
       // Progress the reviewed date by index seconds to avoid exact dates for multiple versions
-      publishedDate: formatDate(new Date(new Date(reviewed).getTime() + (index * 1000))),
+      ...(reviewed ? { publishedDate: formatDate(new Date(new Date(reviewed).getTime() + (index * 1000))) } : {}),
       ...(doiPrefix ? { doi: `${doiPrefix}.${versionIdentifier}`, versionIdentifier } : {}),
       ...(!vor ? {
         preprint: {
@@ -164,6 +164,4 @@ export const prepareManuscript = async ({
       ...(errors.length > 0 ? { errors } : {}),
     };
   }));
-
-  return versionsDecorated;
 };

@@ -140,15 +140,20 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
         warning: undefined,
       }, undefined, 2)));
     } else {
-      const [{ publishedDate }] = versions;
-      const volume = Math.max(1, new Date(publishedDate).getFullYear() - 2025 + 1).toString();
+      const publishedDates = versions
+        .map(({ publishedDate }) => publishedDate)
+        .filter((publishedDate) => typeof publishedDate === 'string');
+      const volume = [...publishedDates.map((publishedDate) => new Date(publishedDate).getFullYear() - 2025 + 1), -1]
+        .reduce((a, b) => (a < 1 ? Math.max(1, b) : a), 0)
+        .toString();
+      const [publishedDate] = publishedDates;
       res.send(
         generateManuscriptDataForm(JSON.stringify({
           id: msid,
           manuscript: {
             eLocationId: msid,
             volume,
-            publishedDate,
+            ...(publishedDate ? { publishedDate } : {}),
           },
           versions,
         }, undefined, 2)),

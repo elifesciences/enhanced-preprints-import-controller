@@ -96,7 +96,8 @@ export const manuscriptDataHelperFormSchema = Joi.object<PrepareManuscriptDataHe
   msid: Joi.string().trim().required(),
   versions: Joi.array().items(Joi.object({
     biorxiv: Joi.number().min(1).integer().required(),
-    reviewed: Joi.string().trim().isoDate().required(),
+    reviewed: Joi.string().trim().isoDate().optional()
+      .empty(''),
     report: Joi.string().trim().optional().empty(''),
     response: Joi.string().trim().optional().empty(''),
     evaluation: Joi.string().trim().optional().empty(''),

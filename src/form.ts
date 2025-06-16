@@ -312,7 +312,7 @@ export const generateManuscriptDataHelperForm = (versions: number) => htmlPage(
         <label>Biorxiv Preprint version: <input type="text" name="versions[${version}][biorxiv]" required/></label>
       </p>
       <p>
-        <label>Reviewed Date (YYYY-MM-DD): <input type="text" name="versions[${version}][reviewed]" required/></label>
+        <label>Reviewed Date (YYYY-MM-DD): <input type="text" name="versions[${version}][reviewed]"/></label>
       </p>
       <p>
         <label>Report ID: <input type="text" name="versions[${version}][report]"/></label>
