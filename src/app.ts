@@ -140,7 +140,7 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
         warning: undefined,
       }, undefined, 2)));
     } else {
-      const publishedDates = versions
+      const [publishedDate] = versions
         .map(({ publishedDate }) => publishedDate)
         .filter((publishedDate) => typeof publishedDate === 'string');
       const volumeDates = validationResult.value.versions
@@ -151,7 +151,6 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
         .map((volumeDate) => new Date(volumeDate).getFullYear() - 2025 + 1)
         .reduce((a, b) => (a < 1 ? Math.max(1, b) : a), 0)
         .toString() : null;
-      const [publishedDate] = publishedDates;
       res.send(
         generateManuscriptDataForm(JSON.stringify({
           id: msid,
