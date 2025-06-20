@@ -143,16 +143,21 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
       const publishedDates = versions
         .map(({ publishedDate }) => publishedDate)
         .filter((publishedDate) => typeof publishedDate === 'string');
-      const volume = [...publishedDates.map((publishedDate) => new Date(publishedDate).getFullYear() - 2025 + 1), -1]
+      const volumeDates = validationResult.value.versions
+        .filter(({ vor, reviewed }) => vor && reviewed)
+        .map(({ reviewed }) => reviewed);
+      const volume = volumeDates.length > 0 ? volumeDates
+        .filter((volumeDate) => volumeDate !== undefined)
+        .map((volumeDate) => new Date(volumeDate).getFullYear() - 2025 + 1)
         .reduce((a, b) => (a < 1 ? Math.max(1, b) : a), 0)
-        .toString();
+        .toString() : null;
       const [publishedDate] = publishedDates;
       res.send(
         generateManuscriptDataForm(JSON.stringify({
           id: msid,
           manuscript: {
             eLocationId: msid,
-            volume,
+            ...(volume ? { volume } : {}),
             ...(publishedDate ? { publishedDate } : {}),
           },
           versions,
