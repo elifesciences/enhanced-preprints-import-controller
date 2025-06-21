@@ -140,7 +140,7 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
         warning: undefined,
       }, undefined, 2)));
     } else {
-      const [publishedDate] = versions
+      const [firstPublishedDate] = versions
         .map(({ publishedDate }) => publishedDate)
         .filter((publishedDate) => typeof publishedDate === 'string');
       const volumeDates = validationResult.value.versions
@@ -157,7 +157,7 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
           manuscript: {
             eLocationId: msid,
             ...(volume ? { volume } : {}),
-            ...(publishedDate ? { publishedDate } : {}),
+            ...(firstPublishedDate ? { publishedDate: firstPublishedDate } : {}),
           },
           versions,
         }, undefined, 2)),
