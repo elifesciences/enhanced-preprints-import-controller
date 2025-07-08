@@ -61,6 +61,15 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
       <label><input type="checkbox" name="purge" value="true"/> Delete before import</label>
     </p>
     <p>
+      <label>Tenant ID: 
+        <select name="tenant">
+          <option>- default -</option>
+          <option value="elife">elife</option>
+          <option value="biophysics-colab">biophysics-colab</option>
+        </select>
+      </label>
+    </p>
+    <p>
       <button type="submit" id="submit-button">Submit</button>
     </p>
   </form>

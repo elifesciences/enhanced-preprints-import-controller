@@ -85,10 +85,12 @@ export const versionedReviewedPreprintSchema = Joi.object({
   content: Joi.array().items(Joi.string()).optional(),
 });
 
-export const manuscriptDataSchema = Joi.object<ManuscriptData & { purge: boolean }>({
+export const manuscriptDataSchema = Joi.object<ManuscriptData & { tenant?: string, purge: boolean }>({
   id: Joi.string().required(),
   manuscript: manuscriptSchema.optional(),
   versions: Joi.array().items(versionedReviewedPreprintSchema, versionedPreprintSchema).min(1).required(),
+  tenant: Joi.string().trim().optional()
+    .custom((value) => (['elife', 'biophysics-colab'].includes(value) ? value : undefined)),
   purge: Joi.boolean().invalid(false),
 });
 

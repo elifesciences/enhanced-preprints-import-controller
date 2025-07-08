@@ -181,6 +181,7 @@ app.post('/manuscript-data', async (req, res) => {
   const input = JSON.parse(req.body.manuscript.data);
   const namespace = req.body.temporalNamespace;
   const purge = !!req.body.purge;
+  const { tenant } = req.body;
   if (!namespace || namespace.length === 0) {
     res.status(400).send({
       result: false,
@@ -193,7 +194,11 @@ app.post('/manuscript-data', async (req, res) => {
   }
 
   // this is not destructured because for some reason that removes the type from the value property and marks it as an any
-  const validationResult = manuscriptDataSchema.validate(input, { abortEarly: false, allowUnknown: true });
+  const validationResult = manuscriptDataSchema.validate({
+    ...input,
+    tenant,
+    ...(purge ? { purge } : {}),
+  }, { abortEarly: false, allowUnknown: true });
   // type for value only exists if its inside this check
   if (validationResult.error === undefined) {
     // eslint-disable-next-line no-console
@@ -207,7 +212,12 @@ app.post('/manuscript-data', async (req, res) => {
       connection,
       namespace,
     });
-    const validationResultValue = validationResult.value;
+    const {
+      purge: validationResultPurge,
+      tenant: validationResultTenant,
+      ...validationResultValue
+    } = validationResult.value;
+
     // send to temporal
     await client.workflow.start('importManuscriptData', {
       taskQueue: config.temporalTaskQueue,
@@ -220,9 +230,10 @@ app.post('/manuscript-data', async (req, res) => {
       args: [
         {
           data: validationResultValue,
-          ...(purge ? {
+          ...(validationResultPurge || validationResultTenant ? {
             workflowArgs: {
-              purgeBeforeImport: true,
+              ...(validationResultPurge ? { purgeBeforeImport: true } : {}),
+              ...(validationResultTenant ? { siteName: validationResultTenant } : {}),
             },
           } : {}),
         },

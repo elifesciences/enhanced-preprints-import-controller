@@ -56,7 +56,6 @@ export type PrepareManuscriptDataHelper = {
     evaluation?: string,
     vor?: boolean,
   }[],
-  purge?: string,
 };
 
 export const prepareManuscript = async ({
