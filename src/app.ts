@@ -140,15 +140,16 @@ app.post('/manuscript-data-helper-form', async (req, res) => {
         warning: undefined,
       }, undefined, 2)));
     } else {
-      const [firstPublishedDate] = versions
-        .map(({ publishedDate }) => publishedDate)
-        .filter((publishedDate) => typeof publishedDate === 'string');
-      const volumeDates = validationResult.value.versions
+      const vorDates = validationResult.value.versions
         .filter(({ vor, reviewed }) => vor && reviewed)
         .map(({ reviewed }) => reviewed);
-      const volume = volumeDates.length > 0 ? volumeDates
-        .filter((volumeDate) => volumeDate !== undefined)
-        .map((volumeDate) => new Date(volumeDate).getFullYear() - 2025 + 1)
+      // Use the first VOR date as manuscript publishDate, otherwise use first reviewed preprint date.
+      const [firstPublishedDate] = vorDates.length > 0 ? vorDates : versions
+        .map(({ publishedDate }) => publishedDate)
+        .filter((publishedDate) => typeof publishedDate === 'string');
+      const volume = vorDates.length > 0 ? vorDates
+        .filter((vorDate) => vorDate !== undefined)
+        .map((vorDate) => new Date(vorDate).getFullYear() - 2025 + 1)
         .reduce((a, b) => (a < 1 ? Math.max(1, b) : a), 0)
         .toString() : null;
       res.send(
