@@ -55,6 +55,7 @@ export type PrepareManuscriptDataHelper = {
     response?: string,
     evaluation?: string,
     vor?: boolean,
+    pdf?: string,
   }[],
 };
 
@@ -69,7 +70,7 @@ export const prepareManuscript = async ({
   };
 
   return Promise.all(versions.map(async ({
-    biorxiv: biorxivVersion, reviewed, evaluation, report, response, vor,
+    biorxiv: biorxivVersion, reviewed, evaluation, report, response, pdf, vor,
   }, index) => {
     const [
       {
@@ -118,6 +119,8 @@ export const prepareManuscript = async ({
       errors.push(`Could not retrieve biorxiv response for ${versionedDoi}`);
     }
 
+    const content: string[] = [biorxivDetails.content, ...(pdf ? [pdf] : [])];
+
     const createEvaluation = (reviewType: string, date: Date, participants: string[], contentUrl: string) => ({
       reviewType,
       date: formatDate(date),
@@ -143,12 +146,12 @@ export const prepareManuscript = async ({
           doi,
           publishedDate: formatDate(biorxivDetails.date),
           versionIdentifier: biorxivVersion.toString(),
-          content: [biorxivDetails.content],
+          content,
           url: `https://www.biorxiv.org/content/${versionedDoi}`,
         },
       } : {}),
       license: 'http://creativecommons.org/licenses/by/4.0/',
-      content: [biorxivDetails.content],
+      content,
       peerReview: {
         reviews: (report && peerReviewDate) ? [createEvaluation('review-article', peerReviewDate, [], evaluationUrl(report))] : [],
         ...(response && authorResponseDate ? {
