@@ -67,7 +67,7 @@ jobs:
             ghcr.io/elifesciences/enhanced-preprints-import-controller:latest
             ghcr.io/elifesciences/enhanced-preprints-import-controller:master-${{ steps.commit_sha.outputs.commit_sha }}-${{ steps.date.outputs.date }}
       - name: Generate artefact attestation
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v3
         with:
           subject-name: ghcr.io/elifesciences/enhanced-preprints-import-controller
           subject-digest: ${{ steps.build-push.outputs.digest }}
