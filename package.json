@@ -30,7 +30,7 @@
     "axios": "^1.7.9",
     "body-parser": "^2.0.0",
     "express": "^5.0.0",
-    "joi": "^17.13.3"
+    "joi": "^18.0.0"
   },
   "scripts": {
     "start": "ts-node ./src/main.ts",
