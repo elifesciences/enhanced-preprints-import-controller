@@ -108,6 +108,8 @@ export const manuscriptDataHelperFormSchema = Joi.object<PrepareManuscriptDataHe
   }).or('report', 'response', 'evaluation')).min(1).required(),
 });
 
-export const importDocmapFormSchema = Joi.object<{ docmap: string }>({
+export const importDocmapFormSchema = Joi.object<{ docmap: string, workflowIdPrefix?: string }>({
   docmap: Joi.string().trim().required(),
+  workflowIdPrefix: Joi.string().trim().optional()
+    .empty(''),
 });

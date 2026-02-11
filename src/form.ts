@@ -32,6 +32,10 @@ export const generateImportDocmapForm = () => htmlPage(
       </select>
     </p>
     <p>
+      <label for="workflowIdPrefix">Workflow Id prefix:</label>
+      <input id="workflowIdPrefix" name="workflowIdPrefix" required/>
+    </p>
+    <p>
       <button type="submit">Submit</button>
     </p>
   </form>`,
@@ -61,7 +65,7 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
       <label><input type="checkbox" name="purge" value="true"/> Delete before import</label>
     </p>
     <p>
-      <label>Tenant ID: 
+      <label>Tenant ID:
         <select name="tenant">
           <option>- default -</option>
           <option value="elife">elife</option>
@@ -89,7 +93,7 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const textarea = document.getElementById('manuscript-data');
-      
+
       // Initialize CodeMirror
       const editor = CodeMirror(document.getElementById('editor-container'), {
         value: textarea.value,
@@ -116,7 +120,7 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
           highlightLines: true
         }
       });
-      
+
       // Add focus support for label click
       const label = document.querySelector('label[for="manuscript-data"]');
       if (label) {
@@ -135,7 +139,7 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
         // If not valid JSON, keep as is
         console.log('Initial JSON parsing failed:', e);
       }
-      
+
       // Function to adjust editor height based on content
       const updateEditorHeight = () => {
         // Get current number of lines
@@ -146,10 +150,10 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
         const newHeight = Math.max(280, Math.min(window.innerHeight * 0.8, lineHeight * lineCount * 1.2 + 15));
         editor.setSize(null, newHeight);
       };
-      
+
       // Update height initially
       updateEditorHeight();
-      
+
       // Update height when content changes
       editor.on('change', updateEditorHeight);
 
@@ -157,7 +161,7 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
       document.querySelector('form').addEventListener('submit', function(e) {
         // Get the editor content
         const content = editor.getValue();
-        
+
         try {
           // Validate JSON and format it
           const jsonObj = JSON.parse(content);
@@ -177,7 +181,7 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
           try {
             const content = editor.getValue();
             let jsonObj = JSON.parse(content);
-            
+
             // If the pasted content is an array, extract the first item
             if (Array.isArray(jsonObj) && jsonObj.length > 0) {
               jsonObj = jsonObj[0];
@@ -209,11 +213,11 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
       font-size: 21px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-    
+
     .CodeMirror-scroll {
       min-height: 280px;
     }
-    
+
     /* Reduce line spacing and ensure alignment */
     .CodeMirror pre.CodeMirror-line,
     .CodeMirror pre.CodeMirror-line-like,
@@ -222,14 +226,14 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
       padding: 0 4px;
       line-height: 1.3;
     }
-    
+
     /* Fix line number alignment */
     .CodeMirror-linenumber {
       padding-top: 1px;
       text-align: right;
       color: rgba(150, 150, 150, 0.8);
     }
-    
+
     /* Ensure consistent gutter alignment */
     .CodeMirror-gutter-elt {
       height: 1.3em;
@@ -237,12 +241,12 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
       align-items: center;
       justify-content: flex-end;
     }
-    
+
     /* Style the folding gutter */
     .CodeMirror-foldgutter {
       width: 1.2em;
     }
-    
+
     .CodeMirror-foldgutter-open,
     .CodeMirror-foldgutter-folded {
       cursor: pointer;
@@ -252,58 +256,58 @@ export const generateManuscriptDataForm = (defaultValue?: string) => htmlPage(
       justify-content: center;
       color: #89DDFF;
     }
-    
+
     .CodeMirror-foldgutter-open:after {
       content: "▾";
     }
-    
+
     .CodeMirror-foldgutter-folded:after {
       content: "▸";
     }
-    
+
     /* Ensure the container has enough space */
     #editor-container {
       min-height: 280px;
       width: 90%;
       max-width: 1200px;
     }
-    
+
     /* Improve active line highlighting */
     .CodeMirror-activeline-background {
       background: rgba(0, 0, 0, 0.1);
     }
-    
+
     /* Style matching brackets */
     .CodeMirror-matchingbracket {
       color: #FF9D00 !important;
       font-weight: bold;
       text-shadow: 0 0 3px rgba(255, 157, 0, 0.3);
     }
-    
+
     /* Search dialog styling */
     .CodeMirror-dialog {
       border-bottom: 1px solid #eee;
       background: #f7f7f7;
       padding: 6px;
     }
-    
+
     /* JSON Key-Value styling */
     .cm-property {
       color: #82AAFF;
     }
-    
+
     .cm-string {
       color: #C3E88D;
     }
-    
+
     .cm-number {
       color: #F78C6C;
     }
-    
+
     .cm-atom {
       color: #FF9CAC;
     }
-    
+
   </style>`,
 );
 
@@ -348,7 +352,7 @@ export const generateManuscriptDataHelperForm = (versions: number) => htmlPage(
       border: 0.1em solid;
       padding: 0.5em;
     }
-    
+
     button {
       margin-top: 1em;
     }

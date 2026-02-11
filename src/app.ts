@@ -56,6 +56,7 @@ app.post('/import-docmap', async (req, res) => {
 
     const {
       docmap,
+      workflowIdPrefix,
     } = validationResult.value;
 
     const connection = await Connection.connect({
@@ -70,7 +71,7 @@ app.post('/import-docmap', async (req, res) => {
     await client.workflow.start('importDocmap', {
       taskQueue: config.temporalTaskQueue,
       workflowId: [
-        'import',
+        workflowIdPrefix ?? 'import',
         (new Date()).toISOString().replace(/[-:.TZ]/g, '').slice(0, 15),
         randomBytes(4).toString('hex'),
       ].join('-'),

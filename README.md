@@ -31,3 +31,21 @@ curl -X POST http://localhost:5000/import-docmap \
 ```
 
 Replace `https://example.com/docmap.json` with the actual URL to your DocMap file and `your-namespace` with the appropriate Temporal namespace.
+
+#### Optional Parameters
+
+- `workflowIdPrefix`: Override the default "import" prefix in the auto-generated workflow ID. The workflow ID format is `{prefix}-{timestamp}-{random}`.
+
+Example with custom prefix:
+
+```bash
+curl -X POST http://localhost:5000/import-docmap \
+  -H "Content-Type: application/json" \
+  -d '{
+    "docmap": "https://example.com/docmap.json",
+    "temporalNamespace": "your-namespace",
+    "workflowIdPrefix": "custom-prefix"
+  }'
+```
+
+This will generate a workflow ID like `custom-prefix-20260211123045-a1b2c3d4`.

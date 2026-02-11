@@ -92,6 +92,28 @@ describe('import-controller api tests', () => {
         .send({ docmap: 'https://example.com/docmap.json', temporalNamespace: 'foo' })
         .expect(500, 'An error occurred while processing your request: Temporal connection failed.');
     });
+
+    it('accepts custom workflowIdPrefix', async () => {
+      workflowMock.mockResolvedValue({
+        workflowId: 'custom-prefix-20260211123045-a1b2c3d4',
+        firstExecutionRunId: 4321,
+      });
+
+      await request(app)
+        .post('/import-docmap')
+        .send({ docmap: 'https://example.com/docmap.json', temporalNamespace: 'foo', workflowIdPrefix: 'custom-prefix' })
+        .expect(200)
+        .expect((response) => {
+          expect(response.text).toContain('Import started');
+        });
+
+      expect(workflowMock).toHaveBeenCalledWith(
+        'importDocmap',
+        expect.objectContaining({
+          workflowId: expect.stringContaining('custom-prefix-'),
+        }),
+      );
+    });
   });
 
   describe('POST /manuscript-data', () => {
