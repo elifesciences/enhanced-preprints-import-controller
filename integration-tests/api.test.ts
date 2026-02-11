@@ -53,6 +53,47 @@ describe('import-controller api tests', () => {
     });
   });
 
+  describe('POST /import-docmap', () => {
+    it('validates form input and starts workflow', async () => {
+      workflowMock.mockResolvedValue({
+        workflowId: 1234,
+        firstExecutionRunId: 4321,
+      });
+
+      const url = 'http://localhost:8233/namespaces/foo/workflows/1234/4321';
+
+      await request(app)
+        .post('/import-docmap')
+        .send({ docmap: 'https://example.com/docmap.json', temporalNamespace: 'foo' })
+        .expect(200, `Import started <a href="${url}">${url}</a>`);
+    });
+
+    it('returns 400 if namespace is not provided', async () => {
+      await request(app)
+        .post('/import-docmap')
+        .send({ docmap: 'https://example.com/docmap.json' })
+        .expect(400)
+        .expect((response) => expect(response.body.message).toStrictEqual('missing namespace'));
+    });
+
+    it('returns 400 if docmap is not provided', async () => {
+      await request(app)
+        .post('/import-docmap')
+        .send({ temporalNamespace: 'foo' })
+        .expect(400)
+        .expect((response) => expect(response.text).toContain('validation failed'));
+    });
+
+    it('returns 500 if there is an error with temporal', async () => {
+      workflowMock.mockRejectedValue(new Error('Temporal connection failed'));
+
+      await request(app)
+        .post('/import-docmap')
+        .send({ docmap: 'https://example.com/docmap.json', temporalNamespace: 'foo' })
+        .expect(500, 'An error occurred while processing your request: Temporal connection failed.');
+    });
+  });
+
   describe('POST /manuscript-data', () => {
     it('validates form input', async () => {
       workflowMock.mockResolvedValue({
@@ -71,7 +112,7 @@ describe('import-controller api tests', () => {
     it('returns 400 if namespace is not provided', async () => {
       await request(app)
         .post('/manuscript-data')
-        .send({ manuscript: { data: JSON.stringify({ foo: 'bar' }) }})
+        .send({ manuscript: { data: JSON.stringify({ foo: 'bar' }) } })
         .expect(400)
         .expect((response) => expect(response.body.message).toStrictEqual('missing namespace'));
     });
