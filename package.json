@@ -1,7 +1,7 @@
 {
   "name": "enhanced-preprints-import-controller",
   "devDependencies": {
-    "@tsconfig/node20": "^20.1.4",
+    "@tsconfig/node22": "^22.0.2",
     "@types/body-parser": "^1",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
