@@ -131,6 +131,24 @@ describe('import-controller api tests', () => {
         .expect(200, `Import started <a href="${url}">${url}</a>`);
     });
 
+    it('accepts urlencoded form submission', async () => {
+      workflowMock.mockResolvedValue({
+        workflowId: 1234,
+        firstExecutionRunId: 4321,
+      });
+
+      const url = 'http://localhost:8233/namespaces/foo/workflows/1234/4321';
+
+      await request(app)
+        .post('/manuscript-data')
+        .type('form')
+        .send(new URLSearchParams({
+          'manuscript[data]': JSON.stringify(requiredManuscriptData),
+          temporalNamespace: 'foo',
+        }).toString())
+        .expect(200, `Import started <a href="${url}">${url}</a>`);
+    });
+
     it('returns 400 if namespace is not provided', async () => {
       await request(app)
         .post('/manuscript-data')

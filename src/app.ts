@@ -19,7 +19,7 @@ import { prepareManuscript } from './manuscriptData';
 const app: Express = express();
 
 app.use(express.json());
-app.use(BodyParser.urlencoded());
+app.use(BodyParser.urlencoded({ extended: true }));
 
 app.get('/', (_, res) => {
   res.send(htmlPage('Import Controller', `
