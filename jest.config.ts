@@ -2,10 +2,11 @@
  * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/configuration
  */
-const { defaults: tsjPreset } = require('ts-jest/presets')
+import { createDefaultPreset } from 'ts-jest';
 
+const presetConfig = createDefaultPreset({});
 export default {
-  transform: tsjPreset.transform,
+  transform: presetConfig.transform,
   testEnvironment: 'node',
   // All imported modules in your tests should be mocked automatically
   // automock: false,
